@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cannabis VPD Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌿 Cannabis VPD Calculator</h1>
+            <p class="subtitle">Precision Environmental Control System</p>
+        </header>
+
+        <div class="main-content">
+            <div class="calculator-panel">
+                <h2>Environment Inputs</h2>
+                
+                <div class="input-group">
+                    <label for="temperature">Temperature: <span id="tempDisplay">75</span>°<span id="tempUnit">F</span></label>
+                    <input type="range" id="tempSlider" min="60" max="95" value="75" step="1">
+                    <input type="number" id="tempInput" min="60" max="95" value="75" step="0.1">
+                    <div class="unit-toggle">
+                        <button class="unit-btn active" onclick="setTempUnit('F')">°F</button>
+                        <button class="unit-btn" onclick="setTempUnit('C')">°C</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="humidity">Relative Humidity: <span id="humidityDisplay">60</span>%</label>
+                    <input type="range" id="humiditySlider" min="30" max="90" value="60" step="1">
+                    <input type="number" id="humidityInput" min="30" max="90" value="60" step="1">
+                </div>
+
+                <div class="input-group">
+                    <label>Growth Stage:</label>
+                    <div class="stage-selector">
+                        <button class="stage-btn" data-stage="seedling" onclick="setGrowthStage('seedling')">🌱 Seedling</button>
+                        <button class="stage-btn active" data-stage="vegetative" onclick="setGrowthStage('vegetative')">🌿 Vegetative</button>
+                        <button class="stage-btn" data-stage="flowering" onclick="setGrowthStage('flowering')">🌸 Flowering</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="targetVpd">Target VPD: <span id="targetDisplay">1.0</span> kPa</label>
+                    <input type="range" id="targetSlider" min="0.4" max="1.6" value="1.0" step="0.1">
+                    <input type="number" id="targetInput" min="0.4" max="1.6" value="1.0" step="0.1">
+                    <button class="unit-btn" onclick="setOptimalTarget()" style="margin-top: 10px; width: 100%;">Use Optimal for Stage</button>
+                </div>
+
+                <div class="input-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="leafTempCheck" onchange="toggleLeafTemp()">
+                        <span class="checkmark"></span>
+                        Use Leaf Temperature (more accurate)
+                    </label>
+                    <div class="leaf-temp-controls" id="leafTempControls" style="display: none;">
+                        <label for="leafOffset">Leaf cooler by: <span id="offsetDisplay">3.0</span>°<span id="offsetUnit">F</span></label>
+                        <input type="range" id="offsetSlider" min="1" max="6" value="3" step="0.5">
+                        <input type="number" id="offsetInput" min="1" max="6" value="3" step="0.5">
+                        <div class="leaf-temp-info">
+                            <small>💡 Leaves are typically 2-5°F cooler than air due to transpiration</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vpd-result">
+                    <div class="vpd-value" id="vpdValue">1.20</div>
+                    <div class="vpd-status status-optimal" id="vpdStatus">Optimal Range</div>
+                    <div class="target-info" id="targetInfo">Target: 1.0 kPa</div>
+                </div>
+
+                <div class="recommendations" id="recommendations">
+                    <!-- Recommendations will appear here -->
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h2>VPD Chart</h2>
+                <canvas id="vpdChart"></canvas>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #8e44ad;"></div>
+                        <span>Danger Low</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #3498db;"></div>
+                        <span>Too Low</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #27ae60;"></div>
+                        <span id="optimalLabel">Optimal for Vegetative</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #e67e22;"></div>
+                        <span>Too High</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #8b0000;"></div>
+                        <span>Danger High</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #000;"></div>
+                        <span>Your Reading</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="growth-stages">
+            <div class="stage-card">
+                <h3 class="stage-title">Seedling Stage</h3>
+                <p><strong>Optimal VPD:</strong> 0.4 - 0.8 kPa</p>
+                <p><strong>Temperature:</strong> 75-80°F (24-27°C)</p>
+                <p><strong>Humidity:</strong> 65-75%</p>
+                <p>Young plants need higher humidity to support initial growth and root development.</p>
+            </div>
+
+            <div class="stage-card">
+                <h3 class="stage-title">Vegetative Stage</h3>
+                <p><strong>Optimal VPD:</strong> 0.8 - 1.2 kPa</p>
+                <p><strong>Temperature:</strong> 75-82°F (24-28°C)</p>
+                <p><strong>Humidity:</strong> 55-65%</p>
+                <p>Established plants can handle lower humidity as they develop stronger transpiration.</p>
+            </div>
+
+            <div class="stage-card">
+                <h3 class="stage-title">Flowering Stage</h3>
+                <p><strong>Optimal VPD:</strong> 1.0 - 1.5 kPa</p>
+                <p><strong>Temperature:</strong> 70-78°F (21-26°C)</p>
+                <p><strong>Humidity:</strong> 45-55%</p>
+                <p>Lower humidity prevents mold/mildew on dense buds while maintaining transpiration.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
