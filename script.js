@@ -226,6 +226,19 @@ function updateTempComparison() {
     } else {
         targetInfo.innerHTML = 'Target: ' + targetVPD.toFixed(1) + ' kPa';
     }
+    
+    // Update leaf temperature display in the controls section
+    updateLeafTempDisplay();
+}
+
+function updateLeafTempDisplay() {
+    const leafTempDisplay = document.getElementById('leafTempDisplay');
+    const leafTempUnit = document.getElementById('leafTempUnit');
+    
+    if (leafTempDisplay && leafTempUnit) {
+        leafTempDisplay.textContent = leafTempOffset.toFixed(1);
+        leafTempUnit.textContent = tempUnit;
+    }
 }
 
 function toggleLeafTemp() {
@@ -504,6 +517,7 @@ function setupEventListeners() {
             const offsetDisplay = document.getElementById('offsetDisplay');
             if (offsetInput) offsetInput.value = leafTempOffset;
             if (offsetDisplay) offsetDisplay.textContent = leafTempOffset.toFixed(1);
+            updateLeafTempDisplay();
             updateVPD();
         }},
         { id: 'offsetInput', event: 'input', handler: function(e) {
@@ -514,7 +528,22 @@ function setupEventListeners() {
             const offsetDisplay = document.getElementById('offsetDisplay');
             if (offsetSlider) offsetSlider.value = leafTempOffset;
             if (offsetDisplay) offsetDisplay.textContent = leafTempOffset.toFixed(1);
+            updateLeafTempDisplay();
             updateVPD();
+        }},
+        { id: 'dliSlider', event: 'input', handler: function(e) {
+            const dliValue = validateInput(e.target.value, 15, 60, 30);
+            const dliInput = document.getElementById('dliInput');
+            const dliDisplay = document.getElementById('dliDisplay');
+            if (dliInput) dliInput.value = dliValue;
+            if (dliDisplay) dliDisplay.textContent = dliValue;
+        }},
+        { id: 'dliInput', event: 'input', handler: function(e) {
+            const dliValue = validateInput(e.target.value, 15, 60, 30);
+            const dliSlider = document.getElementById('dliSlider');
+            const dliDisplay = document.getElementById('dliDisplay');
+            if (dliSlider) dliSlider.value = dliValue;
+            if (dliDisplay) dliDisplay.textContent = dliValue;
         }}
     ];
 
@@ -528,9 +557,139 @@ function setupEventListeners() {
 
 window.addEventListener('load', function() {
     setupEventListeners();
+    updateLeafTempDisplay();
     updateVPD();
 });
 
 window.addEventListener('resize', function() {
     setTimeout(drawChart, 100);
 });
+
+// Local Storage Functions
+function saveSettings() {
+    const settings = {
+        temperature: currentTemp,
+        humidity: currentHumidity,
+        tempUnit: tempUnit,
+        growthStage: currentStage,
+        targetVPD: targetVPD,
+        useLeafTemp: useLeafTemp,
+        leafTempOffset: leafTempOffset,
+        dli: document.getElementById('dliSlider') ? document.getElementById('dliSlider').value : 30,
+        timestamp: new Date().toISOString()
+    };
+    
+    try {
+        localStorage.setItem('vpdCalculatorSettings', JSON.stringify(settings));
+        updateStorageInfo('✅ Settings saved successfully!');
+        setTimeout(() => updateStorageInfo('💡 Settings are saved locally in your browser'), 3000);
+    } catch (error) {
+        updateStorageInfo('❌ Error saving settings: ' + error.message);
+    }
+}
+
+function loadSettings() {
+    try {
+        const saved = localStorage.getItem('vpdCalculatorSettings');
+        if (!saved) {
+            updateStorageInfo('⚠️ No saved settings found');
+            setTimeout(() => updateStorageInfo('💡 Settings are saved locally in your browser'), 3000);
+            return;
+        }
+        
+        const settings = JSON.parse(saved);
+        
+        // Load temperature settings
+        if (settings.tempUnit !== tempUnit) {
+            setTempUnit(settings.tempUnit);
+        }
+        currentTemp = settings.temperature || currentTemp;
+        
+        // Load other settings
+        currentHumidity = settings.humidity || currentHumidity;
+        currentStage = settings.growthStage || currentStage;
+        targetVPD = settings.targetVPD || targetVPD;
+        useLeafTemp = settings.useLeafTemp || false;
+        leafTempOffset = settings.leafTempOffset || leafTempOffset;
+        
+        // Update UI elements
+        updateAllInputs();
+        setGrowthStage(currentStage);
+        
+        // Load DLI if available
+        const dliSlider = document.getElementById('dliSlider');
+        const dliInput = document.getElementById('dliInput');
+        const dliDisplay = document.getElementById('dliDisplay');
+        if (settings.dli && dliSlider) {
+            dliSlider.value = settings.dli;
+            if (dliInput) dliInput.value = settings.dli;
+            if (dliDisplay) dliDisplay.textContent = settings.dli;
+        }
+        
+        // Load leaf temp settings
+        document.getElementById('leafTempCheck').checked = useLeafTemp;
+        toggleLeafTemp();
+        
+        updateVPD();
+        
+        const saveDate = new Date(settings.timestamp).toLocaleDateString();
+        updateStorageInfo('✅ Settings loaded from ' + saveDate);
+        setTimeout(() => updateStorageInfo('💡 Settings are saved locally in your browser'), 3000);
+        
+    } catch (error) {
+        updateStorageInfo('❌ Error loading settings: ' + error.message);
+    }
+}
+
+function clearSettings() {
+    if (confirm('Are you sure you want to clear all saved settings?')) {
+        try {
+            localStorage.removeItem('vpdCalculatorSettings');
+            updateStorageInfo('✅ Saved settings cleared');
+            setTimeout(() => updateStorageInfo('💡 Settings are saved locally in your browser'), 3000);
+        } catch (error) {
+            updateStorageInfo('❌ Error clearing settings: ' + error.message);
+        }
+    }
+}
+
+function updateStorageInfo(message) {
+    const storageInfo = document.getElementById('storageInfo');
+    if (storageInfo) {
+        storageInfo.innerHTML = '<small>' + message + '</small>';
+    }
+}
+
+function updateAllInputs() {
+    // Temperature
+    const tempSlider = document.getElementById('tempSlider');
+    const tempInput = document.getElementById('tempInput');
+    const tempDisplay = document.getElementById('tempDisplay');
+    if (tempSlider) tempSlider.value = currentTemp;
+    if (tempInput) tempInput.value = currentTemp.toFixed(1);
+    if (tempDisplay) tempDisplay.textContent = Math.round(currentTemp);
+    
+    // Humidity
+    const humSlider = document.getElementById('humiditySlider');
+    const humInput = document.getElementById('humidityInput');
+    const humDisplay = document.getElementById('humidityDisplay');
+    if (humSlider) humSlider.value = currentHumidity;
+    if (humInput) humInput.value = currentHumidity;
+    if (humDisplay) humDisplay.textContent = currentHumidity;
+    
+    // Target VPD
+    const targetSlider = document.getElementById('targetSlider');
+    const targetInput = document.getElementById('targetInput');
+    const targetDisplay = document.getElementById('targetDisplay');
+    if (targetSlider) targetSlider.value = targetVPD;
+    if (targetInput) targetInput.value = targetVPD.toFixed(1);
+    if (targetDisplay) targetDisplay.textContent = targetVPD.toFixed(1);
+    
+    // Leaf temp offset
+    const offsetSlider = document.getElementById('offsetSlider');
+    const offsetInput = document.getElementById('offsetInput');
+    const offsetDisplay = document.getElementById('offsetDisplay');
+    if (offsetSlider) offsetSlider.value = leafTempOffset.toFixed(1);
+    if (offsetInput) offsetInput.value = leafTempOffset.toFixed(1);
+    if (offsetDisplay) offsetDisplay.textContent = leafTempOffset.toFixed(1);
+}

@@ -9,14 +9,11 @@
 <body>
     <div class="container">
         <header>
-            <h1>🌿 Cannabis VPD Calculator</h1>
-            <p class="subtitle">Precision Environmental Control System</p>
+            <h1>Cannabis VPD Calculator</h1>
         </header>
 
         <div class="main-content">
             <div class="calculator-panel">
-                <h2>Environment Inputs</h2>
-                
                 <div class="input-group">
                     <label for="temperature">Temperature: <span id="tempDisplay">75</span>°<span id="tempUnit">F</span></label>
                     <input type="range" id="tempSlider" min="60" max="95" value="75" step="1">
@@ -43,20 +40,13 @@
                 </div>
 
                 <div class="input-group">
-                    <label for="targetVpd">Target VPD: <span id="targetDisplay">1.0</span> kPa</label>
-                    <input type="range" id="targetSlider" min="0.4" max="1.6" value="1.0" step="0.1">
-                    <input type="number" id="targetInput" min="0.4" max="1.6" value="1.0" step="0.1">
-                    <button class="unit-btn" onclick="setOptimalTarget()" style="margin-top: 10px; width: 100%;">Use Optimal for Stage</button>
-                </div>
-
-                <div class="input-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="leafTempCheck" onchange="toggleLeafTemp()">
                         <span class="checkmark"></span>
                         Use Leaf Temperature (more accurate)
                     </label>
                     <div class="leaf-temp-controls" id="leafTempControls" style="display: none;">
-                        <label for="leafOffset">Leaf cooler by: <span id="offsetDisplay">3.0</span>°<span id="offsetUnit">F</span></label>
+                        <label for="leafOffset">Leaf Temperature: <span id="leafTempDisplay">72.0</span>°<span id="leafTempUnit">F</span></label>
                         <input type="range" id="offsetSlider" min="1" max="6" value="3" step="0.5">
                         <input type="number" id="offsetInput" min="1" max="6" value="3" step="0.5">
                         <div class="leaf-temp-info">
@@ -65,19 +55,30 @@
                     </div>
                 </div>
 
-                <div class="vpd-result">
-                    <div class="vpd-value" id="vpdValue">1.20</div>
-                    <div class="vpd-status status-optimal" id="vpdStatus">Optimal Range</div>
-                    <div class="target-info" id="targetInfo">Target: 1.0 kPa</div>
+                <div class="input-group">
+                    <label for="dli">Daily Light Integral (DLI): <span id="dliDisplay">30</span> mol/m²/day</label>
+                    <input type="range" id="dliSlider" min="15" max="60" value="30" step="1">
+                    <input type="number" id="dliInput" min="15" max="60" value="30" step="1">
+                    <div class="dli-info">
+                        <small>💡 Seedling: 15-25 | Vegetative: 25-40 | Flowering: 35-60 mol/m²/day</small>
+                    </div>
                 </div>
 
-                <div class="recommendations" id="recommendations">
-                    <!-- Recommendations will appear here -->
+                <div class="input-group">
+                    <label>Save/Load Settings:</label>
+                    <div class="storage-controls">
+                        <button class="storage-btn save-btn" onclick="saveSettings()">💾 Save Current Settings</button>
+                        <button class="storage-btn load-btn" onclick="loadSettings()">📁 Load Saved Settings</button>
+                        <button class="storage-btn clear-btn" onclick="clearSettings()">🗑️ Clear Saved Data</button>
+                    </div>
+                    <div class="storage-info" id="storageInfo">
+                        <small>💡 Settings are saved locally in your browser</small>
+                    </div>
                 </div>
+
             </div>
 
             <div class="chart-container">
-                <h2>VPD Chart</h2>
                 <canvas id="vpdChart"></canvas>
                 <div class="legend">
                     <div class="legend-item">
@@ -104,6 +105,23 @@
                         <div class="legend-color" style="background-color: #000;"></div>
                         <span>Your Reading</span>
                     </div>
+                </div>
+                
+                <div class="vpd-result">
+                    <div class="vpd-value" id="vpdValue">1.20</div>
+                    <div class="vpd-status status-optimal" id="vpdStatus">Optimal Range</div>
+                    <div class="target-info" id="targetInfo">Target: 1.0 kPa</div>
+                </div>
+                
+                <div class="target-section">
+                    <label for="targetVpd">Target VPD: <span id="targetDisplay">1.0</span> kPa</label>
+                    <input type="range" id="targetSlider" min="0.4" max="1.6" value="1.0" step="0.1">
+                    <input type="number" id="targetInput" min="0.4" max="1.6" value="1.0" step="0.1">
+                    <button class="unit-btn" onclick="setOptimalTarget()" style="margin-top: 10px; width: 100%;">Use Optimal for Stage</button>
+                </div>
+                
+                <div class="recommendations" id="recommendations">
+                    <!-- Recommendations will appear here -->
                 </div>
             </div>
         </div>
