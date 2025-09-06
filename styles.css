@@ -273,6 +273,23 @@ input[type="range"]::-webkit-slider-thumb:hover {
     margin-top: 8px;
 }
 
+.dli-controls {
+    background: rgba(0, 255, 136, 0.05);
+    padding: 16px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    margin-top: 8px;
+}
+
+.target-controls {
+    display: none;
+    background: rgba(0, 255, 136, 0.05);
+    padding: 16px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    margin-top: 8px;
+}
+
 .leaf-temp-info {
     margin-top: 8px;
     color: #64748b;
@@ -320,6 +337,19 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 .save-btn:hover {
     background: linear-gradient(135deg, #047857, #00e67a);
+    transform: translateY(-1px);
+}
+
+.log-btn {
+    background: linear-gradient(135deg, #1e3a8a, #3730a3);
+    color: #a5b4fc;
+    border: 1px solid rgba(165, 180, 252, 0.2);
+}
+
+.log-btn:hover {
+    background: linear-gradient(135deg, #312e81, #4338ca);
+    color: #c7d2fe;
+    border-color: rgba(165, 180, 252, 0.4);
     transform: translateY(-1px);
 }
 
@@ -564,7 +594,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     padding-bottom: 8px;
 }
 
-#vpdChart {
+#vpdChartDesktop, #vpdChartMobile {
     width: 100%;
     height: 400px;
     border-radius: 4px;
@@ -656,6 +686,11 @@ input[type="range"]::-webkit-slider-thumb:hover {
     font-weight: 600;
 }
 
+/* Mobile chart - hidden on desktop, shown on mobile */
+.mobile-chart {
+    display: none;
+}
+
 @media (max-width: 1024px) {
     .main-content {
         grid-template-columns: 1fr;
@@ -668,6 +703,18 @@ input[type="range"]::-webkit-slider-thumb:hover {
     
     .vpd-value {
         font-size: 2.8rem;
+    }
+    
+    /* Hide the main chart container on tablets and mobile */
+    .main-content > .chart-container {
+        display: none;
+    }
+    
+    /* Show the mobile chart inside calculator panel */
+    .mobile-chart {
+        display: block;
+        margin-top: 24px;
+        margin-bottom: 32px;
     }
 }
 
@@ -684,6 +731,24 @@ input[type="range"]::-webkit-slider-thumb:hover {
     
     .stage-selector {
         grid-template-columns: 1fr;
+    }
+    
+    /* Adjust mobile chart for smaller screens */
+    .mobile-chart {
+        padding: 16px;
+    }
+    
+    .mobile-chart #vpdChartMobile {
+        height: 300px;
+    }
+    
+    /* Fix VPD result label positioning on mobile */
+    .mobile-chart .vpd-result {
+        margin-top: 70px;
+    }
+    
+    .mobile-chart .vpd-result::before {
+        top: -24px;
     }
 }
 

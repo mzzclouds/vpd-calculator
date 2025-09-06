@@ -56,11 +56,73 @@
                 </div>
 
                 <div class="input-group">
-                    <label for="dli">Daily Light Integral (DLI): <span id="dliDisplay">30</span> mol/m²/day</label>
-                    <input type="range" id="dliSlider" min="15" max="60" value="30" step="1">
-                    <input type="number" id="dliInput" min="15" max="60" value="30" step="1">
-                    <div class="dli-info">
-                        <small>💡 Seedling: 15-25 | Vegetative: 25-40 | Flowering: 35-60 mol/m²/day</small>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="dliCheck" onchange="toggleDLI()">
+                        <span class="checkmark"></span>
+                        Track Daily Light Integral (DLI)
+                    </label>
+                    <div class="dli-controls" id="dliControls" style="display: none;">
+                        <label for="dli">Daily Light Integral (DLI): <span id="dliDisplay">30</span> mol/m²/day</label>
+                        <input type="range" id="dliSlider" min="15" max="60" value="30" step="1">
+                        <input type="number" id="dliInput" min="15" max="60" value="30" step="1">
+                        <div class="dli-info">
+                            <small>💡 Seedling: 15-25 | Vegetative: 25-40 | Flowering: 35-60 mol/m²/day</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile VPD Chart - will be positioned after DLI on mobile -->
+                <div class="chart-container mobile-chart">
+                    <canvas id="vpdChartMobile"></canvas>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #8e44ad;"></div>
+                            <span>Danger Low</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #3498db;"></div>
+                            <span>Too Low</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #27ae60;"></div>
+                            <span id="optimalLabelMobile">Optimal for Vegetative</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #e67e22;"></div>
+                            <span>Too High</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #8b0000;"></div>
+                            <span>Danger High</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #000;"></div>
+                            <span>Your Reading</span>
+                        </div>
+                    </div>
+                    
+                    <div class="vpd-result">
+                        <div class="vpd-value" id="vpdValueMobile">1.20</div>
+                        <div class="vpd-status status-optimal" id="vpdStatusMobile">Optimal Range</div>
+                        <div class="target-info" id="targetInfoMobile">Target: 1.0 kPa</div>
+                    </div>
+                    
+                    <div class="target-section">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="targetVpdCheckMobile" onchange="toggleTargetVPDMobile()">
+                            <span class="checkmark"></span>
+                            Set Custom Target VPD
+                        </label>
+                        <div class="target-controls" id="targetControlsMobile">
+                            <label for="targetVpdMobile">Target VPD: <span id="targetDisplayMobile">1.0</span> kPa</label>
+                            <input type="range" id="targetSliderMobile" min="0.4" max="1.6" value="1.0" step="0.1">
+                            <input type="number" id="targetInputMobile" min="0.4" max="1.6" value="1.0" step="0.1">
+                            <button class="unit-btn" onclick="setOptimalTarget()" style="margin-top: 10px; width: 100%;">Use Optimal for Stage</button>
+                        </div>
+                    </div>
+                    
+                    <div class="recommendations" id="recommendationsMobile">
+                        <!-- Recommendations will appear here -->
                     </div>
                 </div>
 
@@ -80,7 +142,7 @@
                     <label>Download Readings:</label>
                     <div class="storage-controls">
                         <button class="storage-btn save-btn" onclick="downloadCurrentReading()">📊 Download Current Reading</button>
-                        <button class="storage-btn save-btn" onclick="logCurrentReading()">📝 Log Current Reading</button>
+                        <button class="storage-btn log-btn" onclick="logCurrentReading()">📝 Log Current Reading</button>
                         <button class="storage-btn load-btn" onclick="downloadAllReadings()">📁 Download All Logged Readings</button>
                         <button class="storage-btn clear-btn" onclick="clearStoredReadings()">🗑️ Clear Logged Readings</button>
                     </div>
@@ -89,7 +151,7 @@
             </div>
 
             <div class="chart-container">
-                <canvas id="vpdChart"></canvas>
+                <canvas id="vpdChartDesktop"></canvas>
                 <div class="legend">
                     <div class="legend-item">
                         <div class="legend-color" style="background-color: #8e44ad;"></div>
@@ -124,10 +186,17 @@
                 </div>
                 
                 <div class="target-section">
-                    <label for="targetVpd">Target VPD: <span id="targetDisplay">1.0</span> kPa</label>
-                    <input type="range" id="targetSlider" min="0.4" max="1.6" value="1.0" step="0.1">
-                    <input type="number" id="targetInput" min="0.4" max="1.6" value="1.0" step="0.1">
-                    <button class="unit-btn" onclick="setOptimalTarget()" style="margin-top: 10px; width: 100%;">Use Optimal for Stage</button>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="targetVpdCheck" onchange="toggleTargetVPD()">
+                        <span class="checkmark"></span>
+                        Set Custom Target VPD
+                    </label>
+                    <div class="target-controls" id="targetControls">
+                        <label for="targetVpd">Target VPD: <span id="targetDisplay">1.0</span> kPa</label>
+                        <input type="range" id="targetSlider" min="0.4" max="1.6" value="1.0" step="0.1">
+                        <input type="number" id="targetInput" min="0.4" max="1.6" value="1.0" step="0.1">
+                        <button class="unit-btn" onclick="setOptimalTarget()" style="margin-top: 10px; width: 100%;">Use Optimal for Stage</button>
+                    </div>
                 </div>
                 
                 <div class="recommendations" id="recommendations">

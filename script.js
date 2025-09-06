@@ -5,6 +5,8 @@ let currentStage = 'vegetative';
 let targetVPD = 1.0;
 let useLeafTemp = false;
 let leafTempOffset = 3;
+let useDLI = false;
+let useCustomTarget = false;
 
 const stageRanges = {
     seedling: { min: 0.4, max: 0.8, optimal: 0.6 },
@@ -36,18 +38,29 @@ function calculateVPD(tempF, humidity) {
 }
 
 function generateRecommendations() {
+    const recContainer = document.getElementById('recommendations');
+    const recContainerMobile = document.getElementById('recommendationsMobile');
+    
+    // Only show recommendations when custom target is enabled
+    if (!useCustomTarget) {
+        if (recContainer) recContainer.innerHTML = '';
+        if (recContainerMobile) recContainerMobile.innerHTML = '';
+        return;
+    }
+    
     const currentVPD = calculateVPD(currentTemp, currentHumidity);
     const difference = currentVPD - targetVPD;
     const tolerance = 0.05;
     
-    const recContainer = document.getElementById('recommendations');
-    
+    let html = '';
     if (Math.abs(difference) <= tolerance) {
-        recContainer.innerHTML = '<div class="on-target">🎯 Perfect! You\'re right on target!</div>';
+        html = '<div class="on-target">🎯 Perfect! You\'re right on target!</div>';
+        if (recContainer) recContainer.innerHTML = html;
+        if (recContainerMobile) recContainerMobile.innerHTML = html;
         return;
     }
     
-    let html = '<div class="rec-title">💡 Recommendations to reach ' + targetVPD.toFixed(1) + ' kPa:</div>';
+    html = '<div class="rec-title">💡 Recommendations to reach ' + targetVPD.toFixed(1) + ' kPa:</div>';
     
     if (difference > 0) {
         html += '<div class="rec-title" style="font-size: 0.9rem; margin-bottom: 15px;">VPD is ' + Math.abs(difference).toFixed(2) + ' kPa too high. Try:</div>';
@@ -98,7 +111,8 @@ function generateRecommendations() {
         }
     }
     
-    recContainer.innerHTML = html;
+    if (recContainer) recContainer.innerHTML = html;
+    if (recContainerMobile) recContainerMobile.innerHTML = html;
 }
 
 function findTargetHumidity(temp, targetVPD) {
@@ -169,33 +183,50 @@ function updateVPD() {
     const vpd = calculateVPD(currentTemp, currentHumidity);
     const range = stageRanges[currentStage];
     
-    document.getElementById('vpdValue').textContent = vpd.toFixed(2);
+    // Update both desktop and mobile VPD displays
+    const vpdValueEl = document.getElementById('vpdValue');
+    const vpdValueMobileEl = document.getElementById('vpdValueMobile');
+    if (vpdValueEl) vpdValueEl.textContent = vpd.toFixed(2);
+    if (vpdValueMobileEl) vpdValueMobileEl.textContent = vpd.toFixed(2);
     
+    // Update both desktop and mobile status displays
     const statusEl = document.getElementById('vpdStatus');
-    statusEl.className = 'vpd-status ';
+    const statusMobileEl = document.getElementById('vpdStatusMobile');
+    
+    let statusText = '';
+    let statusClass = 'vpd-status ';
     
     if (vpd < range.min - 0.2) {
-        statusEl.textContent = 'Dangerously Low - Risk of mold/mildew';
-        statusEl.className += 'status-danger';
+        statusText = 'Dangerously Low - Risk of mold/mildew';
+        statusClass += 'status-danger';
     } else if (vpd < range.min) {
-        statusEl.textContent = 'Too Low - Slow transpiration';
-        statusEl.className += 'status-low';
+        statusText = 'Too Low - Slow transpiration';
+        statusClass += 'status-low';
     } else if (vpd >= range.min && vpd <= range.max) {
         const distance = Math.abs(vpd - range.optimal);
         const tolerance = 0.1;
         
         if (distance <= tolerance) {
-            statusEl.textContent = 'Perfect for ' + currentStage.charAt(0).toUpperCase() + currentStage.slice(1) + '!';
+            statusText = 'Perfect for ' + currentStage.charAt(0).toUpperCase() + currentStage.slice(1) + '!';
         } else {
-            statusEl.textContent = 'Good for ' + currentStage.charAt(0).toUpperCase() + currentStage.slice(1);
+            statusText = 'Good for ' + currentStage.charAt(0).toUpperCase() + currentStage.slice(1);
         }
-        statusEl.className += 'status-optimal';
+        statusClass += 'status-optimal';
     } else if (vpd <= range.max + 0.4) {
-        statusEl.textContent = 'Too High - Stress risk';
-        statusEl.className += 'status-high';
+        statusText = 'Too High - Stress risk';
+        statusClass += 'status-high';
     } else {
-        statusEl.textContent = 'Dangerously High - Plant stress';
-        statusEl.className += 'status-danger';
+        statusText = 'Dangerously High - Plant stress';
+        statusClass += 'status-danger';
+    }
+    
+    if (statusEl) {
+        statusEl.textContent = statusText;
+        statusEl.className = statusClass;
+    }
+    if (statusMobileEl) {
+        statusMobileEl.textContent = statusText;
+        statusMobileEl.className = statusClass;
     }
     
     updateTempComparison();
@@ -205,27 +236,36 @@ function updateVPD() {
 
 function updateTempComparison() {
     const targetInfo = document.getElementById('targetInfo');
+    const targetInfoMobile = document.getElementById('targetInfoMobile');
     
-    if (useLeafTemp) {
-        const airTemp = currentTemp;
-        const leafTemp = currentTemp - leafTempOffset;
-        
-        const comparisonHTML = '<div class="temp-comparison">' +
-            '<div class="temp-type">' +
-            '<div>Air Temp</div>' +
-            '<div class="temp-value">' + airTemp.toFixed(1) + '°' + tempUnit + '</div>' +
-            '</div>' +
-            '<div style="color: #00ff88;">→</div>' +
-            '<div class="temp-type">' +
-            '<div>Leaf Temp</div>' +
-            '<div class="temp-value">' + leafTemp.toFixed(1) + '°' + tempUnit + '</div>' +
-            '</div>' +
-            '</div>';
-        
-        targetInfo.innerHTML = 'Target: ' + targetVPD.toFixed(1) + ' kPa (using leaf temp)' + comparisonHTML;
+    let targetText = '';
+    if (useCustomTarget) {
+        if (useLeafTemp) {
+            const airTemp = currentTemp;
+            const leafTemp = currentTemp - leafTempOffset;
+            
+            const comparisonHTML = '<div class="temp-comparison">' +
+                '<div class="temp-type">' +
+                '<div>Air Temp</div>' +
+                '<div class="temp-value">' + airTemp.toFixed(1) + '°' + tempUnit + '</div>' +
+                '</div>' +
+                '<div style="color: #00ff88;">→</div>' +
+                '<div class="temp-type">' +
+                '<div>Leaf Temp</div>' +
+                '<div class="temp-value">' + leafTemp.toFixed(1) + '°' + tempUnit + '</div>' +
+                '</div>' +
+                '</div>';
+            
+            targetText = 'Target: ' + targetVPD.toFixed(1) + ' kPa (using leaf temp)' + comparisonHTML;
+        } else {
+            targetText = 'Target: ' + targetVPD.toFixed(1) + ' kPa';
+        }
     } else {
-        targetInfo.innerHTML = 'Target: ' + targetVPD.toFixed(1) + ' kPa';
+        targetText = 'Using optimal range for ' + currentStage + ' stage';
     }
+    
+    if (targetInfo) targetInfo.innerHTML = targetText;
+    if (targetInfoMobile) targetInfoMobile.innerHTML = targetText;
     
     // Update leaf temperature display in the controls section
     updateLeafTempDisplay();
@@ -254,6 +294,64 @@ function toggleLeafTemp() {
     updateVPD();
 }
 
+function toggleDLI() {
+    useDLI = document.getElementById('dliCheck').checked;
+    const controls = document.getElementById('dliControls');
+    
+    if (useDLI) {
+        controls.style.display = 'block';
+    } else {
+        controls.style.display = 'none';
+    }
+}
+
+function toggleTargetVPD() {
+    const checkbox = document.getElementById('targetVpdCheck');
+    useCustomTarget = checkbox ? checkbox.checked : false;
+    const controls = document.getElementById('targetControls');
+    const controlsMobile = document.getElementById('targetControlsMobile');
+    const mobileCheck = document.getElementById('targetVpdCheckMobile');
+    
+    // Sync both checkboxes
+    if (mobileCheck) mobileCheck.checked = useCustomTarget;
+    
+    if (useCustomTarget) {
+        if (controls) controls.style.display = 'block';
+        if (controlsMobile) controlsMobile.style.display = 'block';
+    } else {
+        if (controls) controls.style.display = 'none';
+        if (controlsMobile) controlsMobile.style.display = 'none';
+        // Reset to optimal target for current stage when disabled
+        targetVPD = stageRanges[currentStage].optimal;
+        updateAllInputs();
+    }
+    
+    updateVPD();
+}
+
+function toggleTargetVPDMobile() {
+    useCustomTarget = document.getElementById('targetVpdCheckMobile').checked;
+    const controls = document.getElementById('targetControls');
+    const controlsMobile = document.getElementById('targetControlsMobile');
+    const desktopCheck = document.getElementById('targetVpdCheck');
+    
+    // Sync both checkboxes
+    if (desktopCheck) desktopCheck.checked = useCustomTarget;
+    
+    if (useCustomTarget) {
+        if (controls) controls.style.display = 'block';
+        if (controlsMobile) controlsMobile.style.display = 'block';
+    } else {
+        if (controls) controls.style.display = 'none';
+        if (controlsMobile) controlsMobile.style.display = 'none';
+        // Reset to optimal target for current stage when disabled
+        targetVPD = stageRanges[currentStage].optimal;
+        updateAllInputs();
+    }
+    
+    updateVPD();
+}
+
 function setOptimalTarget() {
     targetVPD = stageRanges[currentStage].optimal;
     document.getElementById('targetSlider').value = targetVPD;
@@ -273,7 +371,14 @@ function setGrowthStage(stage) {
         vegetative: 'Vegetative', 
         flowering: 'Flowering'
     };
-    document.getElementById('optimalLabel').textContent = 'Optimal for ' + stageNames[stage];
+    
+    // Update both desktop and mobile optimal labels
+    const optimalLabel = document.getElementById('optimalLabel');
+    const optimalLabelMobile = document.getElementById('optimalLabelMobile');
+    const labelText = 'Optimal for ' + stageNames[stage];
+    
+    if (optimalLabel) optimalLabel.textContent = labelText;
+    if (optimalLabelMobile) optimalLabelMobile.textContent = labelText;
     
     updateVPD();
 }
@@ -347,7 +452,15 @@ function setTempUnit(unit) {
 }
 
 function drawChart() {
-    const canvas = document.getElementById('vpdChart');
+    // Draw on both desktop and mobile canvases
+    const desktopCanvas = document.getElementById('vpdChartDesktop');
+    const mobileCanvas = document.getElementById('vpdChartMobile');
+    
+    if (desktopCanvas) drawChartOnCanvas(desktopCanvas);
+    if (mobileCanvas) drawChartOnCanvas(mobileCanvas);
+}
+
+function drawChartOnCanvas(canvas) {
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
@@ -505,8 +618,42 @@ function setupEventListeners() {
             targetVPD = validateInput(e.target.value, 0.4, 1.6, targetVPD);
             const targetSlider = document.getElementById('targetSlider');
             const targetDisplay = document.getElementById('targetDisplay');
+            const targetSliderMobile = document.getElementById('targetSliderMobile');
+            const targetInputMobile = document.getElementById('targetInputMobile');
+            const targetDisplayMobile = document.getElementById('targetDisplayMobile');
             if (targetSlider) targetSlider.value = targetVPD;
             if (targetDisplay) targetDisplay.textContent = targetVPD.toFixed(1);
+            if (targetSliderMobile) targetSliderMobile.value = targetVPD;
+            if (targetInputMobile) targetInputMobile.value = targetVPD;
+            if (targetDisplayMobile) targetDisplayMobile.textContent = targetVPD.toFixed(1);
+            updateVPD();
+        }},
+        { id: 'targetSliderMobile', event: 'input', handler: function(e) {
+            targetVPD = validateInput(e.target.value, 0.4, 1.6, targetVPD);
+            const targetSlider = document.getElementById('targetSlider');
+            const targetInput = document.getElementById('targetInput');
+            const targetDisplay = document.getElementById('targetDisplay');
+            const targetInputMobile = document.getElementById('targetInputMobile');
+            const targetDisplayMobile = document.getElementById('targetDisplayMobile');
+            if (targetSlider) targetSlider.value = targetVPD;
+            if (targetInput) targetInput.value = targetVPD;
+            if (targetDisplay) targetDisplay.textContent = targetVPD.toFixed(1);
+            if (targetInputMobile) targetInputMobile.value = targetVPD;
+            if (targetDisplayMobile) targetDisplayMobile.textContent = targetVPD.toFixed(1);
+            updateVPD();
+        }},
+        { id: 'targetInputMobile', event: 'input', handler: function(e) {
+            targetVPD = validateInput(e.target.value, 0.4, 1.6, targetVPD);
+            const targetSlider = document.getElementById('targetSlider');
+            const targetInput = document.getElementById('targetInput');
+            const targetDisplay = document.getElementById('targetDisplay');
+            const targetSliderMobile = document.getElementById('targetSliderMobile');
+            const targetDisplayMobile = document.getElementById('targetDisplayMobile');
+            if (targetSlider) targetSlider.value = targetVPD;
+            if (targetInput) targetInput.value = targetVPD;
+            if (targetDisplay) targetDisplay.textContent = targetVPD.toFixed(1);
+            if (targetSliderMobile) targetSliderMobile.value = targetVPD;
+            if (targetDisplayMobile) targetDisplayMobile.textContent = targetVPD.toFixed(1);
             updateVPD();
         }},
         { id: 'offsetSlider', event: 'input', handler: function(e) {
@@ -558,6 +705,12 @@ function setupEventListeners() {
 window.addEventListener('load', function() {
     setupEventListeners();
     updateLeafTempDisplay();
+    
+    // Ensure all optional sections start in correct state based on checkboxes
+    toggleLeafTemp();
+    toggleDLI();
+    // Don't call toggleTargetVPD here - let CSS display:none handle initial state
+    
     updateVPD();
 });
 
@@ -575,7 +728,9 @@ function saveSettings() {
         targetVPD: targetVPD,
         useLeafTemp: useLeafTemp,
         leafTempOffset: leafTempOffset,
-        dli: document.getElementById('dliSlider') ? document.getElementById('dliSlider').value : 30,
+        useDLI: useDLI,
+        useCustomTarget: useCustomTarget,
+        dli: useDLI && document.getElementById('dliSlider') ? document.getElementById('dliSlider').value : 30,
         timestamp: new Date().toISOString()
     };
     
@@ -630,6 +785,18 @@ function loadSettings() {
         document.getElementById('leafTempCheck').checked = useLeafTemp;
         toggleLeafTemp();
         
+        // Load DLI settings
+        useDLI = settings.useDLI || false;
+        document.getElementById('dliCheck').checked = useDLI;
+        toggleDLI();
+        
+        // Load custom target settings
+        useCustomTarget = settings.useCustomTarget || false;
+        document.getElementById('targetVpdCheck').checked = useCustomTarget;
+        const targetCheckMobile = document.getElementById('targetVpdCheckMobile');
+        if (targetCheckMobile) targetCheckMobile.checked = useCustomTarget;
+        toggleTargetVPD();
+        
         updateVPD();
         
         const saveDate = new Date(settings.timestamp).toLocaleDateString();
@@ -677,13 +844,19 @@ function updateAllInputs() {
     if (humInput) humInput.value = currentHumidity;
     if (humDisplay) humDisplay.textContent = currentHumidity;
     
-    // Target VPD
+    // Target VPD (both desktop and mobile)
     const targetSlider = document.getElementById('targetSlider');
     const targetInput = document.getElementById('targetInput');
     const targetDisplay = document.getElementById('targetDisplay');
+    const targetSliderMobile = document.getElementById('targetSliderMobile');
+    const targetInputMobile = document.getElementById('targetInputMobile');
+    const targetDisplayMobile = document.getElementById('targetDisplayMobile');
     if (targetSlider) targetSlider.value = targetVPD;
     if (targetInput) targetInput.value = targetVPD.toFixed(1);
     if (targetDisplay) targetDisplay.textContent = targetVPD.toFixed(1);
+    if (targetSliderMobile) targetSliderMobile.value = targetVPD;
+    if (targetInputMobile) targetInputMobile.value = targetVPD.toFixed(1);
+    if (targetDisplayMobile) targetDisplayMobile.textContent = targetVPD.toFixed(1);
     
     // Leaf temp offset
     const offsetSlider = document.getElementById('offsetSlider');
@@ -701,7 +874,7 @@ function downloadCurrentReading() {
     const localTime = now.toLocaleString();
     
     const currentVPD = calculateVPD(currentTemp, currentHumidity);
-    const dliValue = document.getElementById('dliSlider') ? document.getElementById('dliSlider').value : 'N/A';
+    const dliValue = useDLI && document.getElementById('dliSlider') ? document.getElementById('dliSlider').value : 'N/A';
     
     const data = {
         timestamp: timestamp,
@@ -761,7 +934,7 @@ function logCurrentReading() {
     const localTime = now.toLocaleString();
     
     const currentVPD = calculateVPD(currentTemp, currentHumidity);
-    const dliValue = document.getElementById('dliSlider') ? document.getElementById('dliSlider').value : 'N/A';
+    const dliValue = useDLI && document.getElementById('dliSlider') ? document.getElementById('dliSlider').value : 'N/A';
     
     const reading = {
         timestamp: timestamp,
