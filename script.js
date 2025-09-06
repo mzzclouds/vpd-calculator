@@ -693,3 +693,147 @@ function updateAllInputs() {
     if (offsetInput) offsetInput.value = leafTempOffset.toFixed(1);
     if (offsetDisplay) offsetDisplay.textContent = leafTempOffset.toFixed(1);
 }
+
+// Download functionality
+function downloadCurrentReading() {
+    const now = new Date();
+    const timestamp = now.toISOString();
+    const localTime = now.toLocaleString();
+    
+    const currentVPD = calculateVPD(currentTemp, currentHumidity);
+    const dliValue = document.getElementById('dliSlider') ? document.getElementById('dliSlider').value : 'N/A';
+    
+    const data = {
+        timestamp: timestamp,
+        localTime: localTime,
+        temperature: currentTemp.toFixed(1),
+        temperatureUnit: tempUnit,
+        humidity: currentHumidity,
+        vpd: currentVPD.toFixed(2),
+        growthStage: currentStage,
+        targetVPD: targetVPD.toFixed(1),
+        useLeafTemp: useLeafTemp,
+        leafTempOffset: useLeafTemp ? leafTempOffset.toFixed(1) : 'N/A',
+        dli: dliValue
+    };
+    
+    // Convert to CSV format
+    const csvHeader = 'Timestamp,Local Time,Temperature,Unit,Humidity (%),VPD (kPa),Growth Stage,Target VPD,Uses Leaf Temp,Leaf Temp Offset,DLI\n';
+    const csvRow = `${data.timestamp},${data.localTime},${data.temperature},${data.temperatureUnit},${data.humidity},${data.vpd},${data.growthStage},${data.targetVPD},${data.useLeafTemp},${data.leafTempOffset},${data.dli}\n`;
+    
+    const csvContent = csvHeader + csvRow;
+    const filename = `vpd-reading-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}.csv`;
+    
+    downloadCSV(csvContent, filename);
+    
+    updateStorageInfo('✅ VPD reading downloaded as CSV');
+    setTimeout(() => updateStorageInfo('💡 Download individual readings to track over time'), 3000);
+}
+
+function downloadAllReadings() {
+    const readings = getStoredReadings();
+    
+    if (readings.length === 0) {
+        updateStorageInfo('⚠️ No readings stored yet. Take some readings first!');
+        setTimeout(() => updateStorageInfo('💡 Use "Log Reading" to store readings for download'), 3000);
+        return;
+    }
+    
+    const csvHeader = 'Timestamp,Local Time,Temperature,Unit,Humidity (%),VPD (kPa),Growth Stage,Target VPD,Uses Leaf Temp,Leaf Temp Offset,DLI\n';
+    
+    let csvContent = csvHeader;
+    readings.forEach(reading => {
+        csvContent += `${reading.timestamp},${reading.localTime},${reading.temperature},${reading.temperatureUnit},${reading.humidity},${reading.vpd},${reading.growthStage},${reading.targetVPD},${reading.useLeafTemp},${reading.leafTempOffset},${reading.dli}\n`;
+    });
+    
+    const now = new Date();
+    const filename = `vpd-readings-history-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}.csv`;
+    
+    downloadCSV(csvContent, filename);
+    
+    updateStorageInfo(`✅ Downloaded ${readings.length} readings to CSV`);
+    setTimeout(() => updateStorageInfo('💡 All stored readings exported'), 3000);
+}
+
+function logCurrentReading() {
+    const now = new Date();
+    const timestamp = now.toISOString();
+    const localTime = now.toLocaleString();
+    
+    const currentVPD = calculateVPD(currentTemp, currentHumidity);
+    const dliValue = document.getElementById('dliSlider') ? document.getElementById('dliSlider').value : 'N/A';
+    
+    const reading = {
+        timestamp: timestamp,
+        localTime: localTime,
+        temperature: currentTemp.toFixed(1),
+        temperatureUnit: tempUnit,
+        humidity: currentHumidity,
+        vpd: currentVPD.toFixed(2),
+        growthStage: currentStage,
+        targetVPD: targetVPD.toFixed(1),
+        useLeafTemp: useLeafTemp,
+        leafTempOffset: useLeafTemp ? leafTempOffset.toFixed(1) : 'N/A',
+        dli: dliValue
+    };
+    
+    storeReading(reading);
+    
+    const readings = getStoredReadings();
+    updateStorageInfo(`✅ Reading logged! (${readings.length} total readings stored)`);
+    setTimeout(() => updateStorageInfo('💡 Logged readings can be downloaded as CSV'), 3000);
+}
+
+function downloadCSV(content, filename) {
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+}
+
+function storeReading(reading) {
+    try {
+        const readings = getStoredReadings();
+        readings.push(reading);
+        
+        // Keep only the last 100 readings to prevent storage bloat
+        if (readings.length > 100) {
+            readings.splice(0, readings.length - 100);
+        }
+        
+        localStorage.setItem('vpdReadingsHistory', JSON.stringify(readings));
+    } catch (error) {
+        console.error('Error storing reading:', error);
+        updateStorageInfo('❌ Error storing reading: ' + error.message);
+    }
+}
+
+function getStoredReadings() {
+    try {
+        const stored = localStorage.getItem('vpdReadingsHistory');
+        return stored ? JSON.parse(stored) : [];
+    } catch (error) {
+        console.error('Error loading readings:', error);
+        return [];
+    }
+}
+
+function clearStoredReadings() {
+    if (confirm('Are you sure you want to clear all logged readings? This cannot be undone.')) {
+        try {
+            localStorage.removeItem('vpdReadingsHistory');
+            updateStorageInfo('✅ All logged readings cleared');
+            setTimeout(() => updateStorageInfo('💡 Start logging new readings'), 3000);
+        } catch (error) {
+            updateStorageInfo('❌ Error clearing readings: ' + error.message);
+        }
+    }
+}

@@ -76,6 +76,16 @@
                     </div>
                 </div>
 
+                <div class="input-group">
+                    <label>Download Readings:</label>
+                    <div class="storage-controls">
+                        <button class="storage-btn save-btn" onclick="downloadCurrentReading()">📊 Download Current Reading</button>
+                        <button class="storage-btn save-btn" onclick="logCurrentReading()">📝 Log Current Reading</button>
+                        <button class="storage-btn load-btn" onclick="downloadAllReadings()">📁 Download All Logged Readings</button>
+                        <button class="storage-btn clear-btn" onclick="clearStoredReadings()">🗑️ Clear Logged Readings</button>
+                    </div>
+                </div>
+
             </div>
 
             <div class="chart-container">
