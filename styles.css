@@ -305,7 +305,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 .leaf-temp-info {
     margin-top: 8px;
-    color: #64748b;
+    color: #94a3b8;
     font-size: 0.85rem;
     font-style: italic;
     text-transform: none;
@@ -351,28 +351,58 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 .input-info small {
-    color: #64748b;
+    color: #94a3b8;
     font-size: 0.8rem;
     font-style: italic;
     display: block;
 }
 
 .dli-result {
-    margin-bottom: 16px;
-    padding: 12px;
-    background: rgba(0, 255, 136, 0.1);
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 255, 136, 0.05));
+    padding: 20px;
     border-radius: 4px;
+    text-align: center;
+    margin: 20px 0 16px 0;
+    border: 2px solid rgba(0, 255, 136, 0.3);
+    position: relative;
+}
+
+.dli-result::before {
+    content: "CALCULATED DLI";
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2a3441;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    color: #00ff88;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
     border: 1px solid rgba(0, 255, 136, 0.3);
 }
 
-.dli-result label {
-    font-weight: 500;
+.dli-value {
+    font-size: 2.4rem;
+    font-weight: 300;
+    margin-bottom: 12px;
     color: #00ff88;
+    font-family: 'SF Mono', Monaco, monospace;
+    line-height: 1;
+    margin-top: 8px;
+}
+
+.dli-unit {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    font-weight: 400;
+    margin-top: 2px;
 }
 
 .dli-info {
     margin-top: 16px;
-    color: #64748b;
+    color: #94a3b8;
     font-size: 0.85rem;
     font-style: italic;
     text-transform: none;
@@ -448,7 +478,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 .storage-info {
     margin-top: 8px;
-    color: #64748b;
+    color: #94a3b8;
     font-size: 0.85rem;
     font-style: italic;
     text-transform: none;
@@ -613,7 +643,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .vpd-value::after {
     content: " kPa";
     font-size: 1rem;
-    color: #64748b;
+    color: #94a3b8;
     font-weight: 400;
 }
 
