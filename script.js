@@ -1290,3 +1290,20 @@ function clearStoredReadings() {
         }
     }
 }
+
+// Privacy Policy Modal Functions
+function openPrivacyModal() {
+    document.getElementById('privacyModal').style.display = 'block';
+}
+
+function closePrivacyModal() {
+    document.getElementById('privacyModal').style.display = 'none';
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById('privacyModal');
+    if (event.target == modal) {
+        closePrivacyModal();
+    }
+}
