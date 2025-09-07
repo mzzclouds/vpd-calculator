@@ -400,6 +400,42 @@ input[type="range"]::-webkit-slider-thumb:hover {
     margin-top: 2px;
 }
 
+.dli-chart-container {
+    margin: 20px 0;
+    background: rgba(0, 255, 136, 0.03);
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    border-radius: 4px;
+    padding: 16px;
+    text-align: center;
+}
+
+.dli-chart-container canvas {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.dli-chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 12px;
+    font-size: 0.85rem;
+}
+
+.dli-chart-legend .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dli-chart-legend .legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
 .dli-info {
     margin-top: 16px;
     color: #94a3b8;
@@ -645,6 +681,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
     font-size: 1rem;
     color: #94a3b8;
     font-weight: 400;
+    margin-left: 1em;
+    letter-spacing: 0.1em;
 }
 
 .vpd-status {

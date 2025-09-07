@@ -38,6 +38,188 @@ function updateDLI() {
     if (dliDisplay) {
         dliDisplay.textContent = dli.toFixed(1);
     }
+    drawDLIChart();
+}
+
+function drawDLIChart() {
+    const canvas = document.getElementById('dliChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    
+    // Set actual size in memory (scaled for high DPI displays)
+    canvas.width = 600 * dpr;
+    canvas.height = 300 * dpr;
+    
+    // Scale the context
+    ctx.scale(dpr, dpr);
+    
+    const width = 600;
+    const height = 300;
+    const margin = { top: 40, right: 40, bottom: 60, left: 60 };
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
+    
+    // Clear canvas
+    ctx.fillStyle = '#2a3441';
+    ctx.fillRect(0, 0, width, height);
+    
+    // DLI data by week (regular growth, high growth)
+    const dliData = [
+        [12, 16], [20, 25], [30, 38], [40, 50], [45, 55], [31, 45], [25, 35],
+        [28, 38], [30, 42], [34, 45], [36, 48], [38, 50], [40, 50], [36, 45], [32, 40]
+    ];
+    
+    const weeks = dliData.length;
+    const maxDLI = 60;
+    const barSpacing = chartWidth / weeks;
+    
+    // Growth stage boundaries (weeks)
+    const stages = [
+        { name: 'Seedling', start: 0, end: 2, color: 'rgba(52, 152, 219, 0.1)' },
+        { name: 'Vegetative', start: 2, end: 8, color: 'rgba(46, 204, 113, 0.1)' },
+        { name: 'Flowering', start: 8, end: 15, color: 'rgba(230, 126, 34, 0.1)' }
+    ];
+    
+    // Draw stage backgrounds
+    stages.forEach(stage => {
+        const x1 = margin.left + (stage.start / weeks) * chartWidth;
+        const x2 = margin.left + (stage.end / weeks) * chartWidth;
+        ctx.fillStyle = stage.color;
+        ctx.fillRect(x1, margin.top, x2 - x1, chartHeight);
+    });
+    
+    // Draw grid lines and labels
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '12px SF Mono, Monaco, monospace';
+    ctx.lineWidth = 1;
+    
+    // Y-axis grid and labels
+    for (let i = 0; i <= 6; i++) {
+        const value = i * 10;
+        const y = margin.top + chartHeight - (value / maxDLI) * chartHeight;
+        
+        ctx.beginPath();
+        ctx.moveTo(margin.left, y);
+        ctx.lineTo(margin.left + chartWidth, y);
+        ctx.stroke();
+        
+        ctx.textAlign = 'right';
+        ctx.fillText(value.toString(), margin.left - 10, y + 4);
+    }
+    
+    // X-axis grid and labels
+    for (let i = 0; i < weeks; i++) {
+        const x = margin.left + (i * barSpacing) + barSpacing / 2;
+        
+        if (i % 2 === 0) {
+            ctx.beginPath();
+            ctx.moveTo(x, margin.top);
+            ctx.lineTo(x, margin.top + chartHeight);
+            ctx.stroke();
+        }
+        
+        ctx.textAlign = 'center';
+        ctx.fillText(i.toString(), x, height - margin.bottom + 20);
+    }
+    
+    // Draw axes
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(margin.left, margin.top);
+    ctx.lineTo(margin.left, margin.top + chartHeight);
+    ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
+    ctx.stroke();
+    
+    // Draw bars
+    const barWidth = chartWidth / weeks * 0.7;
+    dliData.forEach((weekData, week) => {
+        const x = margin.left + (week * barSpacing) + (barSpacing - barWidth) / 2;
+        
+        // Regular growth bar (bottom)
+        const regularHeight = (weekData[0] / maxDLI) * chartHeight;
+        ctx.fillStyle = '#4ade80'; // Light green
+        ctx.fillRect(x, margin.top + chartHeight - regularHeight, barWidth, regularHeight);
+        
+        // High growth bar (top portion)
+        const highHeight = ((weekData[1] - weekData[0]) / maxDLI) * chartHeight;
+        ctx.fillStyle = '#16a34a'; // Darker green
+        ctx.fillRect(x, margin.top + chartHeight - regularHeight - highHeight, barWidth, highHeight);
+        
+        // Draw values
+        ctx.fillStyle = '#1a202c';
+        ctx.font = 'bold 10px SF Mono, Monaco, monospace';
+        ctx.textAlign = 'center';
+        
+        // Regular growth value
+        if (weekData[0] > 15) {
+            ctx.fillText(weekData[0].toString(), x + barWidth/2, margin.top + chartHeight - regularHeight/2 + 3);
+        }
+        
+        // High growth value
+        if (weekData[1] > weekData[0] + 5) {
+            ctx.fillText(weekData[1].toString(), x + barWidth/2, margin.top + chartHeight - regularHeight - highHeight/2 + 3);
+        }
+    });
+    
+    // Draw stage labels
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 14px SF Mono, Monaco, monospace';
+    ctx.textAlign = 'center';
+    
+    stages.forEach(stage => {
+        const centerX = margin.left + ((stage.start + stage.end) / 2 / weeks) * chartWidth;
+        ctx.fillText(stage.name, centerX, margin.top - 15);
+    });
+    
+    // Draw axis labels
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '14px SF Mono, Monaco, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Plant Age in Weeks', width / 2, height - 10);
+    
+    // Y-axis label (rotated)
+    ctx.save();
+    ctx.translate(20, height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    
+    // Draw "DLI" in main color
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '14px SF Mono, Monaco, monospace';
+    ctx.fillText('DLI', -35, 0);
+    
+    // Draw units in muted color like notes
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'italic 12px SF Mono, Monaco, monospace';
+    ctx.fillText('(mol/m²/day)', 35, 0);
+    
+    ctx.restore();
+    
+    // Highlight current DLI if available
+    if (useDLI) {
+        const currentDLI = calculateDLI(currentPPFD, currentPhotoperiod);
+        const y = margin.top + chartHeight - (currentDLI / maxDLI) * chartHeight;
+        
+        ctx.strokeStyle = '#00ff88';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([10, 5]);
+        ctx.beginPath();
+        ctx.moveTo(margin.left, y);
+        ctx.lineTo(margin.left + chartWidth, y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Current DLI label
+        ctx.fillStyle = '#00ff88';
+        ctx.font = 'bold 12px SF Mono, Monaco, monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText(`Your DLI: ${currentDLI.toFixed(1)}`, margin.left + chartWidth - 10, y - 8);
+    }
 }
 
 function calculateVPD(tempF, humidity) {
@@ -788,6 +970,7 @@ window.addEventListener('load', function() {
 
 window.addEventListener('resize', function() {
     setTimeout(drawChart, 100);
+    setTimeout(drawDLIChart, 100);
 });
 
 // Local Storage Functions

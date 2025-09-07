@@ -33,9 +33,9 @@
                 <div class="input-group">
                     <label>Growth Stage:</label>
                     <div class="stage-selector">
-                        <button class="stage-btn" data-stage="seedling" onclick="setGrowthStage('seedling')">🌱 Seedling</button>
-                        <button class="stage-btn active" data-stage="vegetative" onclick="setGrowthStage('vegetative')">🌿 Vegetative</button>
-                        <button class="stage-btn" data-stage="flowering" onclick="setGrowthStage('flowering')">🌸 Flowering</button>
+                        <button class="stage-btn" data-stage="seedling" onclick="setGrowthStage('seedling')">Seedling</button>
+                        <button class="stage-btn active" data-stage="vegetative" onclick="setGrowthStage('vegetative')">Vegetative</button>
+                        <button class="stage-btn" data-stage="flowering" onclick="setGrowthStage('flowering')">Flowering</button>
                     </div>
                 </div>
 
@@ -193,8 +193,25 @@
                             <div class="dli-value" id="dliDisplay">21.6</div>
                             <div class="dli-unit">mol/m²/day</div>
                         </div>
+                        
+                        <div class="dli-chart-container">
+                            <canvas id="dliChart" width="600" height="300"></canvas>
+                            <div class="dli-chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #4ade80;"></div>
+                                    <span>Regular Growth</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #16a34a;"></div>
+                                    <span>High Growth*</span>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="dli-info">
                             <small>💡 Target DLI - Seedling: 15-25 | Vegetative: 25-40 | Flowering: 35-60 mol/m²/day</small>
+                            <br>
+                            <small>* High growth rates require supplemental CO₂ (800-1200 ppm) to prevent light stress and maximize photosynthesis efficiency.</small>
                         </div>
                     </div>
                 </div>
