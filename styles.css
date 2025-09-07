@@ -281,13 +281,26 @@ input[type="range"]::-webkit-slider-thumb:hover {
     margin-top: 8px;
 }
 
-.target-controls {
-    display: none;
+.target-controls-active {
+    display: block;
     background: rgba(0, 255, 136, 0.05);
     padding: 16px;
     border-radius: 4px;
     border: 1px solid rgba(0, 255, 136, 0.2);
     margin-top: 8px;
+}
+
+.target-section {
+    margin-bottom: 24px;
+}
+
+/* Spacing for checkboxes in target section */
+.target-section .checkbox-label {
+    margin-bottom: 16px;
+}
+
+.target-section .checkbox-label:last-of-type {
+    margin-bottom: 24px;
 }
 
 .leaf-temp-info {
@@ -297,6 +310,64 @@ input[type="range"]::-webkit-slider-thumb:hover {
     font-style: italic;
     text-transform: none;
     letter-spacing: normal;
+}
+
+.dli-inputs-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 16px;
+}
+
+.dli-input-group {
+    flex: 1;
+}
+
+.dli-input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.dli-input-group input {
+    width: 100%;
+    padding: 8px 12px;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 4px;
+    color: #e2e8f0;
+    font-family: inherit;
+    font-size: 0.9rem;
+}
+
+.dli-input-group input:focus {
+    outline: none;
+    border-color: rgba(0, 255, 136, 0.5);
+    box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.1);
+}
+
+.input-info {
+    margin-top: 6px;
+}
+
+.input-info small {
+    color: #64748b;
+    font-size: 0.8rem;
+    font-style: italic;
+    display: block;
+}
+
+.dli-result {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: rgba(0, 255, 136, 0.1);
+    border-radius: 4px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.dli-result label {
+    font-weight: 500;
+    color: #00ff88;
 }
 
 .dli-info {

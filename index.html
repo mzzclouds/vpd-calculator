@@ -46,30 +46,15 @@
                         Use Leaf Temperature (more accurate)
                     </label>
                     <div class="leaf-temp-controls" id="leafTempControls" style="display: none;">
-                        <label for="leafOffset">Leaf Temperature: <span id="leafTempDisplay">72.0</span>°<span id="leafTempUnit">F</span></label>
-                        <input type="range" id="offsetSlider" min="1" max="6" value="3" step="0.5">
-                        <input type="number" id="offsetInput" min="1" max="6" value="3" step="0.5">
+                        <label for="leafTemp">Leaf Temperature: <span id="leafTempDisplay">72.0</span>°<span id="leafTempUnit">F</span></label>
+                        <input type="range" id="leafTempSlider" min="60" max="95" value="72" step="0.5">
+                        <input type="number" id="leafTempInput" min="60" max="95" value="72" step="0.5">
                         <div class="leaf-temp-info">
-                            <small>💡 Leaves are typically 2-5°F cooler than air due to transpiration</small>
+                            <small>💡 Enter the actual leaf temperature reading from your thermometer</small>
                         </div>
                     </div>
                 </div>
 
-                <div class="input-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="dliCheck" onchange="toggleDLI()">
-                        <span class="checkmark"></span>
-                        Track Daily Light Integral (DLI)
-                    </label>
-                    <div class="dli-controls" id="dliControls" style="display: none;">
-                        <label for="dli">Daily Light Integral (DLI): <span id="dliDisplay">30</span> mol/m²/day</label>
-                        <input type="range" id="dliSlider" min="15" max="60" value="30" step="1">
-                        <input type="number" id="dliInput" min="15" max="60" value="30" step="1">
-                        <div class="dli-info">
-                            <small>💡 Seedling: 15-25 | Vegetative: 25-40 | Flowering: 35-60 mol/m²/day</small>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Mobile VPD Chart - will be positioned after DLI on mobile -->
                 <div class="chart-container mobile-chart">
@@ -107,23 +92,6 @@
                         <div class="target-info" id="targetInfoMobile">Target: 1.0 kPa</div>
                     </div>
                     
-                    <div class="target-section">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="targetVpdCheckMobile" onchange="toggleTargetVPDMobile()">
-                            <span class="checkmark"></span>
-                            Set Custom Target VPD
-                        </label>
-                        <div class="target-controls" id="targetControlsMobile">
-                            <label for="targetVpdMobile">Target VPD: <span id="targetDisplayMobile">1.0</span> kPa</label>
-                            <input type="range" id="targetSliderMobile" min="0.4" max="1.6" value="1.0" step="0.1">
-                            <input type="number" id="targetInputMobile" min="0.4" max="1.6" value="1.0" step="0.1">
-                            <button class="unit-btn" onclick="setOptimalTarget()" style="margin-top: 10px; width: 100%;">Use Optimal for Stage</button>
-                        </div>
-                    </div>
-                    
-                    <div class="recommendations" id="recommendationsMobile">
-                        <!-- Recommendations will appear here -->
-                    </div>
                 </div>
 
                 <div class="input-group">
@@ -185,25 +153,53 @@
                     <div class="target-info" id="targetInfo">Target: 1.0 kPa</div>
                 </div>
                 
-                <div class="target-section">
+                <div class="target-section" id="targetSection">
                     <label class="checkbox-label">
-                        <input type="checkbox" id="targetVpdCheck" onchange="toggleTargetVPD()">
+                        <input type="checkbox" id="targetVpdCheck">
                         <span class="checkmark"></span>
                         Set Custom Target VPD
                     </label>
-                    <div class="target-controls" id="targetControls">
-                        <label for="targetVpd">Target VPD: <span id="targetDisplay">1.0</span> kPa</label>
-                        <input type="range" id="targetSlider" min="0.4" max="1.6" value="1.0" step="0.1">
-                        <input type="number" id="targetInput" min="0.4" max="1.6" value="1.0" step="0.1">
-                        <button class="unit-btn" onclick="setOptimalTarget()" style="margin-top: 10px; width: 100%;">Use Optimal for Stage</button>
+                    
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="dliCheck" onchange="toggleDLI()">
+                        <span class="checkmark"></span>
+                        Track Daily Light Integral (DLI)
+                    </label>
+                    
+                    <div id="targetControlsContainer"></div>
+                    
+                    <div class="recommendations" id="recommendations">
+                        <!-- Recommendations will appear here -->
                     </div>
-                </div>
-                
-                <div class="recommendations" id="recommendations">
-                    <!-- Recommendations will appear here -->
+                    
+                    <div class="dli-controls" id="dliControls" style="display: none;">
+                        <div class="dli-inputs-row">
+                            <div class="dli-input-group">
+                                <label for="ppfd">PPFD: <span id="ppfdDisplay">500</span> μmol/m²/s</label>
+                                <input type="number" id="ppfdInput" min="100" max="2000" value="500" step="10">
+                                <div class="input-info">
+                                    <small>💡 Use a quantum meter to measure light intensity</small>
+                                </div>
+                            </div>
+                            <div class="dli-input-group">
+                                <label for="photoperiod">Photoperiod: <span id="photoperiodDisplay">12</span> hours</label>
+                                <input type="number" id="photoperiodInput" min="8" max="24" value="12" step="0.5">
+                                <div class="input-info">
+                                    <small>💡 Number of hours your lights are on per day</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dli-result">
+                            <label>Calculated DLI: <span id="dliDisplay">21.6</span> mol/m²/day</label>
+                        </div>
+                        <div class="dli-info">
+                            <small>💡 Target DLI - Seedling: 15-25 | Vegetative: 25-40 | Flowering: 35-60 mol/m²/day</small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
 
         <div class="growth-stages">
             <div class="stage-card">
