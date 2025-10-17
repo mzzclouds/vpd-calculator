@@ -585,11 +585,6 @@ function setGrowthStage(stage) {
     if (optimalLabel) optimalLabel.textContent = labelText;
     if (optimalLabelMobile) optimalLabelMobile.textContent = labelText;
     
-    // Track growth stage changes for better ad targeting
-    trackUserEngagement('growth_stage_changed', { 
-        stage: stage, 
-        vpd: calculateVPD(currentTemp, currentHumidity).toFixed(2)
-    });
     
     updateVPD();
 }
@@ -1001,9 +996,6 @@ function saveSettings() {
         localStorage.setItem('vpdCalculatorSettings', JSON.stringify(settings));
         updateStorageInfo('✅ Settings saved successfully!');
         setTimeout(() => updateStorageInfo('💡 Settings are saved locally in your browser'), 3000);
-        
-        // Track user engagement for ad targeting
-        trackUserEngagement('settings_saved', { stage: currentStage, vpd: calculateVPD(currentTemp, currentHumidity).toFixed(2) });
     } catch (error) {
         updateStorageInfo('❌ Error saving settings: ' + error.message);
     }
@@ -1183,15 +1175,7 @@ function downloadCurrentReading() {
     const filename = `vpd-reading-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}.csv`;
     
     downloadCSV(csvContent, filename);
-    
-    // Track conversion - user downloaded data (high engagement)
-    trackConversion('download_reading', 2.0);
-    trackUserEngagement('reading_downloaded', { 
-        stage: currentStage, 
-        vpd: currentVPD.toFixed(2),
-        export_type: 'single_reading'
-    });
-    
+
     updateStorageInfo('✅ VPD reading downloaded as CSV');
     setTimeout(() => updateStorageInfo('💡 Download individual readings to track over time'), 3000);
 }
@@ -1305,41 +1289,6 @@ function clearStoredReadings() {
         } catch (error) {
             updateStorageInfo('❌ Error clearing readings: ' + error.message);
         }
-    }
-}
-
-// Google Ads Conversion Tracking Functions
-function trackConversion(action, value) {
-    if (typeof gtag !== 'undefined') {
-        gtag('event', 'conversion', {
-            'send_to': 'AW-CONVERSION_ID/CONVERSION_LABEL', // Replace with your conversion tracking details
-            'value': value || 1.0,
-            'currency': 'USD',
-            'transaction_id': Date.now().toString()
-        });
-    }
-    
-    // Alternative method for AdSense (page engagement tracking)
-    if (typeof window.adsbygoogle !== 'undefined') {
-        // Track meaningful user interactions
-        gtag('event', action, {
-            'event_category': 'VPD Calculator',
-            'event_label': action,
-            'value': value || 1
-        });
-    }
-}
-
-// Enhanced event tracking for better ad targeting
-function trackUserEngagement(eventName, customData = {}) {
-    if (typeof gtag !== 'undefined') {
-        gtag('event', eventName, {
-            'event_category': 'User Engagement',
-            'event_label': eventName,
-            'custom_parameter_1': customData.stage || currentStage,
-            'custom_parameter_2': customData.vpd || calculateVPD(currentTemp, currentHumidity).toFixed(2),
-            ...customData
-        });
     }
 }
 
