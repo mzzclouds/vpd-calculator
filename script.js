@@ -1,3 +1,17 @@
+// Collapsible Section Toggle
+function toggleSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    const icon = document.getElementById(sectionId + 'Icon');
+
+    if (section.style.display === 'none') {
+        section.style.display = 'block';
+        icon.classList.add('expanded');
+    } else {
+        section.style.display = 'none';
+        icon.classList.remove('expanded');
+    }
+}
+
 let tempUnit = 'F';
 let currentTemp = 75;
 let currentHumidity = 60;
@@ -1307,4 +1321,25 @@ window.onclick = function(event) {
     if (event.target == modal) {
         closePrivacyModal();
     }
+}
+
+// Filter blog posts by category
+function filterByCategory(category) {
+    const posts = document.querySelectorAll('.blog-post');
+
+    posts.forEach(post => {
+        if (category === 'all') {
+            post.style.display = 'block';
+        } else {
+            const postCategory = post.querySelector('.post-category');
+            if (postCategory && postCategory.textContent === category) {
+                post.style.display = 'block';
+            } else {
+                post.style.display = 'none';
+            }
+        }
+    });
+
+    // Scroll to blog posts section
+    document.querySelector('.blog-posts').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
