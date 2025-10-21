@@ -1368,3 +1368,29 @@ function filterByCategory(category) {
     // Scroll to blog posts section
     document.querySelector('.blog-posts').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+// Back to Top Button functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Create back to top button if on article page
+    if (document.querySelector('.blog-article')) {
+        const backToTopBtn = document.createElement('button');
+        backToTopBtn.className = 'back-to-top';
+        backToTopBtn.innerHTML = '↑';
+        backToTopBtn.setAttribute('aria-label', 'Back to top');
+        document.body.appendChild(backToTopBtn);
+
+        // Show/hide button on scroll
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        // Scroll to top on click
+        backToTopBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+});
