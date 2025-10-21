@@ -104,8 +104,8 @@ header h1 {
 
 .main-content {
     display: grid;
-    grid-template-columns: 420px 1fr;
-    gap: 32px;
+    grid-template-columns: 440px 1fr;
+    gap: 48px;
     margin-bottom: 40px;
 }
 
