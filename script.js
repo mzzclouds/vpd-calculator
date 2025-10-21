@@ -724,16 +724,38 @@ function drawChartOnCanvas(canvas) {
     
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, width, height);
-    
+
     const margin = 60;
     const chartWidth = width - 2 * margin;
     const chartHeight = height - 2 * margin;
-    
+
     const tempMin = tempUnit === 'F' ? 65 : 18;
     const tempMax = tempUnit === 'F' ? 85 : 29;
     const humMin = 40;
     const humMax = 80;
-    
+
+    // Draw subtle grid lines
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.08)';
+    ctx.lineWidth = 1;
+
+    // Vertical grid lines
+    for (let temp = tempMin; temp <= tempMax; temp += 5) {
+        const x = margin + ((temp - tempMin) / (tempMax - tempMin)) * chartWidth;
+        ctx.beginPath();
+        ctx.moveTo(x, margin);
+        ctx.lineTo(x, height - margin);
+        ctx.stroke();
+    }
+
+    // Horizontal grid lines
+    for (let hum = humMin; hum <= humMax; hum += 10) {
+        const y = margin + ((humMax - hum) / (humMax - humMin)) * chartHeight;
+        ctx.beginPath();
+        ctx.moveTo(margin, y);
+        ctx.lineTo(width - margin, y);
+        ctx.stroke();
+    }
+
     const stepSize = 1.0;
     
     for (let temp = tempMin; temp < tempMax; temp += stepSize) {
@@ -752,16 +774,16 @@ function drawChartOnCanvas(canvas) {
         }
     }
     
-    ctx.strokeStyle = '#333';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#1a1a1a';
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.moveTo(margin, margin);
     ctx.lineTo(margin, height - margin);
     ctx.lineTo(width - margin, height - margin);
     ctx.stroke();
-    
-    ctx.fillStyle = '#333';
-    ctx.font = '14px Arial';
+
+    ctx.fillStyle = '#1a1a1a';
+    ctx.font = 'bold 13px Inter, -apple-system, sans-serif';
     ctx.textAlign = 'center';
     
     for (let temp = tempMin; temp <= tempMax; temp += 5) {
@@ -776,14 +798,17 @@ function drawChartOnCanvas(canvas) {
     }
     
     ctx.textAlign = 'center';
-    ctx.font = '16px Arial';
+    ctx.font = 'bold 15px Inter, -apple-system, sans-serif';
+    ctx.fillStyle = '#028552';
     ctx.fillText('Temperature (' + tempUnit + ')', width / 2, height - 10);
-    
+
     ctx.save();
     ctx.translate(15, height / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.fillText('Relative Humidity (%)', 0, 0);
     ctx.restore();
+
+    ctx.fillStyle = '#1a1a1a';
     
     const currentX = margin + ((currentTemp - tempMin) / (tempMax - tempMin)) * chartWidth;
     const currentY = margin + ((humMax - currentHumidity) / (humMax - humMin)) * chartHeight;

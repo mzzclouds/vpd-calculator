@@ -8,7 +8,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-    background: #b6babf;
+    background: linear-gradient(135deg, #b6babf 0%, #c2c6cb 50%, #b6babf 100%);
     color: #1a1a1a;
     min-height: 100vh;
     padding: 20px;
@@ -108,19 +108,26 @@ header h1 {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     position: relative;
     margin: 0 auto;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.calculator-panel:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
 }
 
 .calculator-panel::before {
     content: "ENVIRONMENTAL PARAMETERS";
     position: absolute;
-    top: -12px;
+    top: -14px;
     left: 50%;
     transform: translateX(-50%);
     background: #ffffff;
-    padding: 4px 12px;
-    font-size: 0.85rem;
+    padding: 6px 16px;
+    font-size: 0.95rem;
+    font-weight: 700;
     color: #03cc6f;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     border: 2px solid #03cc6f;
     border-radius: 8px;
     white-space: nowrap;
@@ -138,8 +145,15 @@ header h1 {
 }
 
 .input-group {
-    margin-bottom: 36px;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
     position: relative;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.input-group:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
 .input-group:first-child {
@@ -154,7 +168,7 @@ label {
     font-size: 1.05rem;
     color: #1a1a1a;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     padding-left: 12px;
 }
 
@@ -182,7 +196,14 @@ label {
 
 .collapsible-content {
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    max-height: 0;
+    opacity: 0;
+}
+
+.collapsible-content[style*="display: block"] {
+    max-height: 1000px;
+    opacity: 1;
 }
 
 input[type="number"], input[type="range"] {
@@ -261,7 +282,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     font-size: 0.9rem;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -304,7 +325,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     font-weight: 500;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     flex: 1 1 0;
     min-width: 0;
     display: flex;
@@ -335,7 +356,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     color: #4a4a4a;
     font-size: 1rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     gap: 16px;
 }
 
@@ -585,7 +606,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     font-size: 0.9rem;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     width: 100%;
     max-width: 285px;
 }
@@ -771,7 +792,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     padding: 24px 20px;
     border-radius: 16px;
     text-align: center;
-    margin-bottom: 48px;
+    margin-bottom: 64px;
     border: 3px solid #03cc6f;
     position: relative;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -832,6 +853,12 @@ input[type="range"]::-webkit-slider-thumb:hover {
     border: 2px solid #03cc6f;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     position: relative;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.chart-container:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
 }
 
 .chart-container::before {
@@ -910,7 +937,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .stage-card {
     background: #f0f0f0;
     border-radius: 16px;
-    padding: 24px;
+    padding: 32px;
     border: 2px solid #e0e0e0;
     transition: all 0.3s ease;
     position: relative;
@@ -919,7 +946,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 .stage-card:hover {
     border-color: #03cc6f;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    transform: translateY(-4px);
 }
 
 .stage-title {
@@ -1192,13 +1220,14 @@ input[type="range"]::-webkit-slider-thumb:hover {
     border-radius: 16px;
     padding: 24px;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .blog-post:hover {
     background: #ffffff;
     border-color: #03cc6f;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
 .blog-post-link {
@@ -1321,7 +1350,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 /* Individual Blog Article Styles */
 .blog-article {
-    max-width: 800px;
+    max-width: 850px;
     margin: 40px auto;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
@@ -1372,7 +1401,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 .article-content {
-    line-height: 1.7;
+    line-height: 1.8;
 }
 
 .article-intro {
