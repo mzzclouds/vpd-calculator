@@ -848,7 +848,7 @@ input[type="range"]::-moz-range-thumb:hover {
     border-radius: 16px;
     text-align: center;
     margin-bottom: 64px;
-    border: 3px solid #2563eb;
+    border: 3px solid #1e40af;
     position: relative;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -862,9 +862,9 @@ input[type="range"]::-moz-range-thumb:hover {
     background: #ffffff;
     padding: 6px 16px;
     font-size: 0.8rem;
-    color: #2563eb;
+    color: #1e40af;
     letter-spacing: 0.15em;
-    border: 2px solid #2563eb;
+    border: 2px solid #1e40af;
     border-radius: 8px;
     font-weight: 600;
 }
@@ -1314,7 +1314,7 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .post-date {
-    color: #2563eb;
+    color: #1e40af;
     font-weight: 500;
 }
 
@@ -1446,7 +1446,7 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .article-date {
-    color: #2563eb;
+    color: #1e40af;
     font-size: 0.9rem;
     font-weight: 500;
 }
