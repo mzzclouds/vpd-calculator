@@ -6,8 +6,18 @@
     box-sizing: border-box;
 }
 
+img, canvas, video {
+    max-width: 100%;
+    height: auto;
+}
+
+input, button, select, textarea {
+    max-width: 100%;
+}
+
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -17,11 +27,15 @@ body {
     min-height: 100vh;
     padding: 20px;
     line-height: 1.6;
+    overflow-x: hidden;
+    max-width: 100vw;
 }
 
 .container {
     max-width: 1400px;
     margin: 0 auto;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 header {
@@ -599,6 +613,7 @@ input[type="range"]::-moz-range-thumb:hover {
 
 .dli-chart-container canvas {
     max-width: 100%;
+    width: 100%;
     height: auto;
     border-radius: 8px;
 }
@@ -945,6 +960,7 @@ input[type="range"]::-moz-range-thumb:hover {
 
 #vpdChartDesktop, #vpdChartMobile {
     width: 100%;
+    max-width: 100%;
     height: 400px;
     border-radius: 4px;
     background: white;
@@ -1070,7 +1086,7 @@ input[type="range"]::-moz-range-thumb:hover {
 
 @media (max-width: 768px) {
     body {
-        padding: 16px;
+        padding: 12px;
         font-size: 14px;
     }
 
@@ -1079,34 +1095,276 @@ input[type="range"]::-moz-range-thumb:hover {
         align-items: center;
         text-align: center;
         gap: 16px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+    }
+
+    header h1 {
+        font-size: 1.6rem;
+        line-height: 1.2;
     }
 
     .main-nav {
         margin-top: 8px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .nav-link {
+        font-size: 0.9rem;
+        padding: 10px 16px;
+        white-space: nowrap;
     }
 
     h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
     .calculator-panel,
     .chart-container {
-        padding: 20px;
+        padding: 16px;
+        border-radius: 12px;
+    }
+
+    .calculator-panel::before,
+    .chart-container::before {
+        font-size: 0.75rem;
+        padding: 4px 12px;
+        top: -12px;
+        white-space: nowrap;
+        max-width: 90%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .input-group {
+        margin-bottom: 32px;
+        padding-bottom: 24px;
+    }
+
+    label {
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+        padding-left: 8px;
     }
 
     .stage-selector {
         grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 6px;
+    }
+
+    .stage-btn {
+        padding: 14px 12px;
+        font-size: 0.8rem;
+        min-height: 44px;
+    }
+
+    .unit-toggle {
+        gap: 6px;
+        padding: 6px;
+    }
+
+    .unit-btn {
+        padding: 12px 14px;
+        font-size: 0.85rem;
+        min-height: 44px;
+    }
+
+    /* Improve touch targets for inputs */
+    input[type="number"] {
+        padding: 16px;
+        font-size: 16px;
+        min-height: 48px;
+    }
+
+    input[type="range"] {
+        height: 10px;
+        margin: 8px 0;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        width: 28px;
+        height: 28px;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 28px;
+        height: 28px;
     }
 
     /* Adjust mobile chart for smaller screens */
     .mobile-chart {
-        padding: 16px;
+        padding: 14px;
+        padding-top: 32px;
+        margin-left: -4px;
+        margin-right: -4px;
+        margin-top: 32px;
     }
 
     .mobile-chart #vpdChartMobile {
-        height: 300px;
+        height: 280px;
     }
 
+    .vpd-result {
+        padding: 20px 16px;
+        margin-bottom: 64px;
+    }
+
+    .vpd-result::before {
+        font-size: 0.7rem;
+        padding: 4px 10px;
+        top: -11px;
+    }
+
+    .mobile-chart .vpd-result {
+        margin-bottom: 48px;
+    }
+
+    .vpd-value {
+        font-size: 3rem;
+        margin-bottom: 8px;
+    }
+
+    .vpd-value::after {
+        font-size: 1.1rem;
+    }
+
+    .vpd-status {
+        font-size: 0.85rem;
+        padding: 8px 16px;
+    }
+
+    .target-info {
+        font-size: 0.9rem;
+        margin-top: 10px;
+    }
+
+    .legend {
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    .legend-item {
+        font-size: 0.7rem;
+        padding: 5px 8px;
+    }
+
+    .legend-color {
+        width: 10px;
+        height: 10px;
+    }
+
+    .growth-stages {
+        gap: 16px;
+        margin-top: 24px;
+        grid-template-columns: 1fr;
+    }
+
+    .stage-card {
+        padding: 20px;
+    }
+
+    .stage-title {
+        font-size: 1.1rem;
+    }
+
+    .storage-controls {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .storage-btn {
+        padding: 12px 14px;
+        font-size: 0.85rem;
+        min-height: 44px;
+    }
+
+    .checkbox-label {
+        font-size: 0.9rem;
+        gap: 12px;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+    }
+
+    .checkbox-text {
+        padding-left: 12px;
+    }
+
+    .checkbox-title {
+        font-size: 0.9rem;
+    }
+
+    .checkbox-subtitle {
+        font-size: 0.8rem;
+    }
+
+    .dli-inputs-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .dli-value {
+        font-size: 2rem;
+    }
+
+    .dli-chart-container {
+        padding: 12px;
+    }
+
+    .dli-chart-legend {
+        gap: 12px;
+        font-size: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .footer {
+        margin-top: 32px;
+        padding: 16px 0;
+    }
+
+    .footer-content {
+        font-size: 0.8rem;
+    }
+}
+
+/* Extra small screens (phones < 400px) */
+@media (max-width: 400px) {
+    body {
+        padding: 10px;
+    }
+
+    header h1 {
+        font-size: 1.4rem;
+    }
+
+    .nav-link {
+        font-size: 0.85rem;
+        padding: 8px 14px;
+    }
+
+    .calculator-panel::before {
+        font-size: 0.65rem;
+        padding: 3px 8px;
+    }
+
+    .vpd-value {
+        font-size: 2.5rem;
+    }
+
+    .stage-btn {
+        font-size: 0.75rem;
+        padding: 12px 10px;
+    }
+
+    .legend-item {
+        font-size: 0.65rem;
+        padding: 4px 6px;
+    }
 }
 
 .status-low {
