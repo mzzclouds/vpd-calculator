@@ -594,6 +594,11 @@ input[type="range"]::-moz-range-thumb:hover {
 
 .target-section {
     margin-bottom: 24px;
+    background: var(--hover-bg);
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid var(--panel-border);
+    transition: background 0.3s ease, border 0.3s ease;
 }
 
 /* Spacing for checkboxes in target section */
