@@ -576,20 +576,14 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .dli-controls {
-    background: var(--hover-bg);
-    padding: 16px;
-    border-radius: 12px;
-    border: 2px solid var(--accent-green);
-    margin-top: 8px;
+    padding: 16px 0 0 0;
+    margin-top: 12px;
 }
 
 .target-controls-active {
     display: block;
-    background: var(--hover-bg);
-    padding: 16px;
-    border-radius: 12px;
-    border: 2px solid var(--accent-green);
-    margin-top: 8px;
+    padding: 16px 0 0 0;
+    margin-top: 12px;
 }
 
 .target-section,
