@@ -675,7 +675,7 @@ input[type="range"]::-moz-range-thumb:hover {
     top: -12px;
     left: 50%;
     transform: translateX(-50%);
-    background: #2a3441;
+    background: var(--label-bg);
     padding: 4px 12px;
     font-size: 0.85rem;
     color: #03cc6f;
@@ -1410,8 +1410,23 @@ input[type="range"]::-moz-range-thumb:hover {
         gap: 16px;
     }
 
+    .dli-result::before {
+        font-size: 0.7rem;
+        padding: 3px 8px;
+        top: -10px;
+        white-space: normal;
+        max-width: 80%;
+        line-height: 1.2;
+    }
+
+    .dli-result {
+        margin-top: 28px;
+        padding-top: 24px;
+    }
+
     .dli-value {
         font-size: 2rem;
+        margin-top: 4px;
     }
 
     .dli-chart-container {
