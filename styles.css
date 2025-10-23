@@ -592,7 +592,8 @@ input[type="range"]::-moz-range-thumb:hover {
     margin-top: 8px;
 }
 
-.target-section {
+.target-section,
+.dli-section {
     margin-bottom: 24px;
     background: var(--hover-bg);
     padding: 12px;
@@ -601,13 +602,10 @@ input[type="range"]::-moz-range-thumb:hover {
     transition: background 0.3s ease, border 0.3s ease;
 }
 
-/* Spacing for checkboxes in target section */
-.target-section .checkbox-label {
-    margin-bottom: 16px;
-}
-
-.target-section .checkbox-label:last-of-type {
-    margin-bottom: 24px;
+/* Spacing for checkboxes in sections */
+.target-section .checkbox-label,
+.dli-section .checkbox-label {
+    margin-bottom: 0;
 }
 
 .leaf-temp-info {

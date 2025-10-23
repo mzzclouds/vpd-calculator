@@ -109,17 +109,11 @@
                         </div>
                     </div>
 
-                    <div class="target-section" id="targetSectionMobile">
+                    <div class="target-section">
                         <label class="checkbox-label">
                             <input type="checkbox" id="targetVpdCheckMobile">
                             <span class="checkmark"></span>
                             Set Custom Target VPD
-                        </label>
-
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="dliCheckMobile" onchange="toggleDLI(event)">
-                            <span class="checkmark"></span>
-                            Track Daily Light Integral (DLI)
                         </label>
 
                         <div id="targetControlsContainerMobile"></div>
@@ -127,6 +121,14 @@
                         <div class="recommendations" id="recommendationsMobile">
                             <!-- Recommendations will appear here -->
                         </div>
+                    </div>
+
+                    <div class="dli-section">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="dliCheckMobile" onchange="toggleDLI(event)">
+                            <span class="checkmark"></span>
+                            Track Daily Light Integral (DLI)
+                        </label>
 
                         <div class="dli-controls" id="dliControlsMobile" style="display: none;">
                             <div class="dli-inputs-row">
@@ -243,25 +245,27 @@
                     </div>
                 </div>
                 
-                <div class="target-section" id="targetSection">
+                <div class="target-section">
                     <label class="checkbox-label">
                         <input type="checkbox" id="targetVpdCheck">
                         <span class="checkmark"></span>
                         Set Custom Target VPD
                     </label>
-                    
+
+                    <div id="targetControlsContainer"></div>
+
+                    <div class="recommendations" id="recommendations">
+                        <!-- Recommendations will appear here -->
+                    </div>
+                </div>
+
+                <div class="dli-section">
                     <label class="checkbox-label">
                         <input type="checkbox" id="dliCheck" onchange="toggleDLI(event)">
                         <span class="checkmark"></span>
                         Track Daily Light Integral (DLI)
                     </label>
-                    
-                    <div id="targetControlsContainer"></div>
-                    
-                    <div class="recommendations" id="recommendations">
-                        <!-- Recommendations will appear here -->
-                    </div>
-                    
+
                     <div class="dli-controls" id="dliControls" style="display: none;">
                         <div class="dli-inputs-row">
                             <div class="dli-input-group">
