@@ -516,6 +516,7 @@ input[type="range"]::-moz-range-thumb:hover {
     text-transform: uppercase;
     letter-spacing: 0.08em;
     gap: 16px;
+    flex-wrap: nowrap;
 }
 
 .checkbox-text {
@@ -526,6 +527,23 @@ input[type="range"]::-moz-range-thumb:hover {
     flex: 1;
     padding-left: 16px;
     border-left: 2px solid rgba(100, 116, 139, 0.3);
+}
+
+/* Left-aligned checkbox text for single-line labels */
+.target-section .checkbox-text,
+.dli-section .checkbox-text {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+}
+
+/* Ensure target section text doesn't wrap */
+.target-section .checkbox-label {
+    white-space: nowrap;
+}
+
+.target-section .checkbox-title {
+    white-space: nowrap;
 }
 
 .checkbox-title {
@@ -547,6 +565,7 @@ input[type="range"]::-moz-range-thumb:hover {
 .checkbox-label input[type="checkbox"] {
     width: 18px;
     height: 18px;
+    min-width: 18px;
     margin: 0;
     accent-color: #03cc6f;
     border: 2px solid rgba(0, 255, 136, 0.4);
@@ -554,6 +573,7 @@ input[type="range"]::-moz-range-thumb:hover {
     background: rgba(22, 28, 42, 0.8);
     cursor: pointer;
     flex-shrink: 0;
+    display: inline-block;
 }
 
 .checkbox-label input[type="checkbox"]:focus {
@@ -576,14 +596,16 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .dli-controls {
-    padding: 16px 0 0 0;
     margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(100, 116, 139, 0.2);
 }
 
 .target-controls-active {
     display: block;
-    padding: 16px 0 0 0;
     margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(100, 116, 139, 0.2);
 }
 
 .target-section,
@@ -888,7 +910,7 @@ input[type="range"]::-moz-range-thumb:hover {
     margin-top: 20px;
 }
 
-.target-section label {
+.target-section .target-controls-active label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
@@ -935,6 +957,10 @@ input[type="range"]::-moz-range-thumb:hover {
     border-radius: 10px;
     margin-top: 0;
     border: none;
+}
+
+.recommendations:empty {
+    display: none;
 }
 
 .recommendations:not(:empty) {
