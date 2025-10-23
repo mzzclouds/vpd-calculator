@@ -658,12 +658,23 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 /* Make number input spinners always visible and styled */
-.dli-input-group input[type="number"]::-webkit-inner-spin-button,
-.dli-input-group input[type="number"]::-webkit-outer-spin-button {
+.dli-input-group input[type="number"]::-webkit-inner-spin-button {
     opacity: 1;
     cursor: pointer;
-    height: 50px;
-    margin-left: 10px;
+    height: 20px;
+    width: 20px;
+    margin: 2px 4px;
+    background-color: var(--accent-green);
+    border-radius: 4px;
+    position: relative;
+}
+
+.dli-input-group input[type="number"]::-webkit-inner-spin-button:hover {
+    background-color: var(--accent-green-dark);
+}
+
+.dli-input-group input[type="number"]::-webkit-outer-spin-button {
+    display: none;
 }
 
 /* For Firefox - show the spinners */
