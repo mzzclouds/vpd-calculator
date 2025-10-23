@@ -516,8 +516,6 @@ input[type="range"]::-moz-range-thumb:hover {
     text-transform: uppercase;
     letter-spacing: 0.08em;
     gap: 16px;
-    position: relative;
-    padding-left: 0;
 }
 
 .checkbox-text {
@@ -546,66 +544,19 @@ input[type="range"]::-moz-range-thumb:hover {
     margin-top: 2px;
 }
 
-/* Hide the default checkbox */
 .checkbox-label input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: #03cc6f;
+    border: 2px solid rgba(0, 255, 136, 0.4);
+    border-radius: 3px;
+    background: rgba(22, 28, 42, 0.8);
     cursor: pointer;
-    height: 0;
-    width: 0;
-}
-
-/* Create a custom checkbox */
-.checkbox-label .checkmark {
-    position: relative;
-    top: 0;
-    left: 0;
-    height: 22px;
-    width: 22px;
-    min-width: 22px;
-    background-color: var(--input-bg);
-    border: 2px solid var(--input-border);
-    border-radius: 6px;
-    transition: all 0.2s ease;
     flex-shrink: 0;
 }
 
-/* On hover, change the border color */
-.checkbox-label:hover .checkmark {
-    border-color: var(--accent-green);
-}
-
-/* When checkbox is checked, add green background */
-.checkbox-label input[type="checkbox"]:checked ~ .checkmark {
-    background-color: var(--accent-green);
-    border-color: var(--accent-green);
-}
-
-/* Create the checkmark/indicator (hidden when not checked) */
-.checkbox-label .checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
-}
-
-/* Show the checkmark when checked */
-.checkbox-label input[type="checkbox"]:checked ~ .checkmark:after {
-    display: block;
-}
-
-/* Style the checkmark */
-.checkbox-label .checkmark:after {
-    left: 6px;
-    top: 2px;
-    width: 6px;
-    height: 11px;
-    border: solid #1a1a1a;
-    border-width: 0 3px 3px 0;
-    transform: rotate(45deg);
-}
-
-/* Focus state for accessibility */
-.checkbox-label input[type="checkbox"]:focus ~ .checkmark {
+.checkbox-label input[type="checkbox"]:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(3, 204, 111, 0.25);
 }
