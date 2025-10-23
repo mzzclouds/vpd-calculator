@@ -601,7 +601,9 @@ function toggleTargetVPD(event) {
 function setupTargetControlEvents() {
     const targetSlider = document.getElementById('targetSlider');
     const targetInput = document.getElementById('targetInput');
-    
+    const targetSliderMobile = document.getElementById('targetSliderMobile');
+    const targetInputMobile = document.getElementById('targetInputMobile');
+
     if (targetSlider) {
         targetSlider.addEventListener('input', function() {
             targetVPD = parseFloat(this.value);
@@ -609,9 +611,25 @@ function setupTargetControlEvents() {
             updateVPD();
         });
     }
-    
+
     if (targetInput) {
         targetInput.addEventListener('input', function() {
+            targetVPD = parseFloat(this.value);
+            updateAllInputs();
+            updateVPD();
+        });
+    }
+
+    if (targetSliderMobile) {
+        targetSliderMobile.addEventListener('input', function() {
+            targetVPD = parseFloat(this.value);
+            updateAllInputs();
+            updateVPD();
+        });
+    }
+
+    if (targetInputMobile) {
+        targetInputMobile.addEventListener('input', function() {
             targetVPD = parseFloat(this.value);
             updateAllInputs();
             updateVPD();
@@ -621,9 +639,19 @@ function setupTargetControlEvents() {
 
 function setOptimalTarget() {
     targetVPD = stageRanges[currentStage].optimal;
-    document.getElementById('targetSlider').value = targetVPD;
-    document.getElementById('targetInput').value = targetVPD;
-    document.getElementById('targetDisplay').textContent = targetVPD.toFixed(1);
+    const targetSlider = document.getElementById('targetSlider');
+    const targetInput = document.getElementById('targetInput');
+    const targetDisplay = document.getElementById('targetDisplay');
+    const targetSliderMobile = document.getElementById('targetSliderMobile');
+    const targetInputMobile = document.getElementById('targetInputMobile');
+    const targetDisplayMobile = document.getElementById('targetDisplayMobile');
+
+    if (targetSlider) targetSlider.value = targetVPD;
+    if (targetInput) targetInput.value = targetVPD;
+    if (targetDisplay) targetDisplay.textContent = targetVPD.toFixed(1);
+    if (targetSliderMobile) targetSliderMobile.value = targetVPD;
+    if (targetInputMobile) targetInputMobile.value = targetVPD;
+    if (targetDisplayMobile) targetDisplayMobile.textContent = targetVPD.toFixed(1);
     updateVPD();
 }
 
