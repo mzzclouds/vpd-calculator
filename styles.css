@@ -517,7 +517,7 @@ input[type="range"]::-moz-range-thumb:hover {
     letter-spacing: 0.08em;
     gap: 16px;
     position: relative;
-    padding-left: 35px;
+    padding-left: 0;
 }
 
 .checkbox-text {
@@ -557,16 +557,17 @@ input[type="range"]::-moz-range-thumb:hover {
 
 /* Create a custom checkbox */
 .checkbox-label .checkmark {
-    position: absolute;
-    top: 50%;
+    position: relative;
+    top: 0;
     left: 0;
-    transform: translateY(-50%);
     height: 22px;
     width: 22px;
+    min-width: 22px;
     background-color: var(--input-bg);
     border: 2px solid var(--input-border);
     border-radius: 6px;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 /* On hover, change the border color */
