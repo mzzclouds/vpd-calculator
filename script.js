@@ -514,12 +514,13 @@ function toggleLeafTemp() {
     updateVPD();
 }
 
-function toggleDLI() {
+function toggleDLI(event) {
     const dliCheckDesktop = document.getElementById('dliCheck');
     const dliCheckMobile = document.getElementById('dliCheckMobile');
 
-    // Get the checkbox that triggered the event, or use desktop as default
-    useDLI = (dliCheckDesktop && dliCheckDesktop.checked) || (dliCheckMobile && dliCheckMobile.checked);
+    // Determine which checkbox triggered the event
+    const triggeredCheckbox = event && event.target ? event.target : dliCheckDesktop;
+    useDLI = triggeredCheckbox ? triggeredCheckbox.checked : false;
 
     // Sync both checkboxes
     if (dliCheckDesktop) dliCheckDesktop.checked = useDLI;
@@ -537,14 +538,15 @@ function toggleDLI() {
     }
 }
 
-function toggleTargetVPD() {
+function toggleTargetVPD(event) {
     const checkboxDesktop = document.getElementById('targetVpdCheck');
     const checkboxMobile = document.getElementById('targetVpdCheckMobile');
     const targetControlsContainer = document.getElementById('targetControlsContainer');
     const targetControlsContainerMobile = document.getElementById('targetControlsContainerMobile');
 
-    // Get state from either checkbox
-    useCustomTarget = (checkboxDesktop && checkboxDesktop.checked) || (checkboxMobile && checkboxMobile.checked);
+    // Determine which checkbox triggered the event
+    const triggeredCheckbox = event && event.target ? event.target : checkboxDesktop;
+    useCustomTarget = triggeredCheckbox ? triggeredCheckbox.checked : false;
 
     // Sync both checkboxes
     if (checkboxDesktop) checkboxDesktop.checked = useCustomTarget;
