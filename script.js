@@ -1416,3 +1416,256 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Print/PDF Current Reading Function
+function printCurrentReading() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const currentVPD = calculateVPD(useLeafTemp ? leafTemp : currentTemp, currentHumidity);
+    const timestamp = new Date().toLocaleString();
+    const tempDisplay = tempUnit === 'F' ? currentTemp : fahrenheitToCelsius(currentTemp);
+    const leafTempDisplay = tempUnit === 'F' ? leafTemp : fahrenheitToCelsius(leafTemp);
+
+    // Get VPD status
+    let status = 'Unknown';
+    let statusColor = [102, 102, 102]; // RGB for PDF
+    const ranges = stageRanges[currentStage];
+    if (currentVPD < ranges.min) {
+        if (currentVPD < 0.4) {
+            status = 'Danger - Too Low';
+            statusColor = [142, 68, 173];
+        } else {
+            status = 'Too Low';
+            statusColor = [59, 130, 246];
+        }
+    } else if (currentVPD >= ranges.min && currentVPD <= ranges.max) {
+        status = 'Optimal';
+        statusColor = [3, 204, 111];
+    } else if (currentVPD > ranges.max) {
+        if (currentVPD > 1.6) {
+            status = 'Danger - Too High';
+            statusColor = [220, 38, 38];
+        } else {
+            status = 'Too High';
+            statusColor = [245, 158, 11];
+        }
+    }
+
+    let yPosition = 20;
+
+    // Header
+    doc.setFontSize(24);
+    doc.setTextColor(26, 26, 26);
+    doc.text('Cannabis VPD Calculator', 105, yPosition, { align: 'center' });
+
+    yPosition += 8;
+    doc.setFontSize(12);
+    doc.setTextColor(3, 204, 111);
+    doc.text('freevpd.com', 105, yPosition, { align: 'center' });
+
+    yPosition += 8;
+    doc.setFontSize(10);
+    doc.setTextColor(102, 102, 102);
+    doc.text('Reading taken: ' + timestamp, 105, yPosition, { align: 'center' });
+
+    // Line under header
+    yPosition += 5;
+    doc.setDrawColor(3, 204, 111);
+    doc.setLineWidth(0.5);
+    doc.line(20, yPosition, 190, yPosition);
+
+    yPosition += 12;
+
+    // VPD Display Box
+    doc.setDrawColor(...statusColor);
+    doc.setLineWidth(1);
+    doc.setFillColor(240, 240, 240);
+    doc.roundedRect(40, yPosition, 130, 30, 3, 3, 'FD');
+
+    // VPD Value
+    doc.setFontSize(32);
+    doc.setTextColor(26, 26, 26);
+    doc.text(currentVPD.toFixed(2) + ' kPa', 105, yPosition + 15, { align: 'center' });
+
+    // VPD Status
+    doc.setFontSize(12);
+    doc.setTextColor(...statusColor);
+    doc.text(status.toUpperCase(), 105, yPosition + 24, { align: 'center' });
+
+    yPosition += 40;
+
+    // Calculate additional metrics
+    const actualTemp = useLeafTemp ? (tempUnit === 'F' ? leafTemp : celsiusToFahrenheit(leafTemp)) : (tempUnit === 'F' ? currentTemp : celsiusToFahrenheit(currentTemp));
+    const tempCelsius = (tempUnit === 'F') ? ((actualTemp - 32) * 5/9) : actualTemp;
+    const svp = 0.6108 * Math.exp((17.27 * tempCelsius) / (tempCelsius + 237.3));
+    const avp = svp * (currentHumidity / 100);
+    const dewPoint = (237.3 * Math.log(avp / 0.6108)) / (17.27 - Math.log(avp / 0.6108));
+    const dewPointDisplay = tempUnit === 'F' ? (dewPoint * 9/5 + 32) : dewPoint;
+
+    // Environmental Parameters Section
+    doc.setFillColor(240, 240, 240);
+    doc.roundedRect(20, yPosition, 170, useLeafTemp ? 59 : 52, 3, 3, 'F');
+
+    yPosition += 8;
+    doc.setFontSize(14);
+    doc.setTextColor(2, 133, 82);
+    doc.text('Environmental Parameters', 25, yPosition);
+
+    yPosition += 8;
+    doc.setFontSize(11);
+    doc.setTextColor(26, 26, 26);
+    doc.text('Air Temperature: ' + tempDisplay.toFixed(1) + '°' + tempUnit, 25, yPosition);
+
+    if (useLeafTemp) {
+        yPosition += 7;
+        doc.text('Leaf Temperature: ' + leafTempDisplay.toFixed(1) + '°' + tempUnit, 25, yPosition);
+    }
+
+    yPosition += 7;
+    doc.text('Relative Humidity: ' + currentHumidity + '%', 25, yPosition);
+
+    yPosition += 7;
+    doc.text('Dew Point: ' + dewPointDisplay.toFixed(1) + '°' + tempUnit, 25, yPosition);
+
+    yPosition += 7;
+    doc.text('Growth Stage: ' + currentStage.charAt(0).toUpperCase() + currentStage.slice(1), 25, yPosition);
+
+    yPosition += 7;
+    doc.text('Saturation Vapor Pressure: ' + svp.toFixed(2) + ' kPa', 25, yPosition);
+
+    yPosition += 7;
+    doc.text('Actual Vapor Pressure: ' + avp.toFixed(2) + ' kPa', 25, yPosition);
+
+    yPosition += 18;
+
+    // Optimal Range Section with all stages
+    doc.setFillColor(240, 240, 240);
+    doc.roundedRect(20, yPosition, 170, 49, 3, 3, 'F');
+
+    yPosition += 8;
+    doc.setFontSize(14);
+    doc.setTextColor(2, 133, 82);
+    doc.text('VPD Ranges by Growth Stage', 25, yPosition);
+
+    yPosition += 9;
+    doc.setFontSize(10);
+    doc.setTextColor(26, 26, 26);
+    doc.setFont(undefined, 'bold');
+    doc.text('Seedling:', 25, yPosition);
+    doc.setFont(undefined, 'normal');
+    doc.text('0.4 - 0.8 kPa (Target: 0.6 kPa)', 60, yPosition);
+
+    yPosition += 7;
+    doc.setFont(undefined, 'bold');
+    doc.text('Vegetative:', 25, yPosition);
+    doc.setFont(undefined, 'normal');
+    doc.text('0.8 - 1.2 kPa (Target: 1.0 kPa)', 60, yPosition);
+
+    yPosition += 7;
+    doc.setFont(undefined, 'bold');
+    doc.text('Flowering:', 25, yPosition);
+    doc.setFont(undefined, 'normal');
+    doc.text('1.0 - 1.5 kPa (Target: 1.25 kPa)', 60, yPosition);
+
+    yPosition += 10;
+    doc.setFontSize(11);
+    doc.setTextColor(2, 133, 82);
+    doc.setFont(undefined, 'bold');
+    doc.text('Current Stage: ' + currentStage.charAt(0).toUpperCase() + currentStage.slice(1), 25, yPosition);
+    doc.text('Target: ' + ranges.optimal.toFixed(1) + ' kPa', 100, yPosition);
+    doc.setFont(undefined, 'normal');
+
+    yPosition += 18;
+
+    // DLI Section if enabled
+    if (useDLI) {
+        const dli = calculateDLI(currentPPFD, currentPhotoperiod);
+
+        doc.setFillColor(240, 240, 240);
+        doc.roundedRect(20, yPosition, 170, 35, 3, 3, 'F');
+
+        yPosition += 8;
+        doc.setFontSize(14);
+        doc.setTextColor(2, 133, 82);
+        doc.text('Daily Light Integral (DLI)', 25, yPosition);
+
+        yPosition += 8;
+        doc.setFontSize(11);
+        doc.setTextColor(26, 26, 26);
+        doc.text('PPFD: ' + currentPPFD + ' μmol/m²/s', 25, yPosition);
+
+        yPosition += 7;
+        doc.text('Photoperiod: ' + currentPhotoperiod + ' hours', 25, yPosition);
+
+        yPosition += 7;
+        doc.text('DLI: ' + dli.toFixed(1) + ' mol/m²/day', 25, yPosition);
+
+        yPosition += 18;
+    }
+
+    // Recommendations section if custom target enabled
+    if (useCustomTarget) {
+        const difference = currentVPD - targetVPD;
+        if (Math.abs(difference) > 0.05) {
+            doc.setFillColor(240, 240, 240);
+            doc.roundedRect(20, yPosition, 170, 21, 3, 3, 'F');
+
+            yPosition += 8;
+            doc.setFontSize(14);
+            doc.setTextColor(2, 133, 82);
+            doc.text('Recommendations', 25, yPosition);
+
+            yPosition += 8;
+            doc.setFontSize(11);
+            doc.setTextColor(26, 26, 26);
+            doc.text('Target VPD: ' + targetVPD.toFixed(2) + ' kPa', 25, yPosition);
+
+            yPosition += 7;
+            doc.text('Current Difference: ' + (difference > 0 ? '+' : '') + difference.toFixed(2) + ' kPa', 25, yPosition);
+
+            yPosition += 18;
+        }
+    }
+
+    // Growing Tips Section
+    doc.setFillColor(240, 240, 240);
+    doc.roundedRect(20, yPosition, 170, 42, 3, 3, 'F');
+
+    yPosition += 8;
+    doc.setFontSize(14);
+    doc.setTextColor(2, 133, 82);
+    doc.text('Quick Tips for VPD Management', 25, yPosition);
+
+    yPosition += 8;
+    doc.setFontSize(9);
+    doc.setTextColor(26, 26, 26);
+    doc.text('• Monitor VPD throughout the day as conditions change', 25, yPosition);
+    yPosition += 5;
+    doc.text('• Higher VPD = More transpiration (water uptake increases)', 25, yPosition);
+    yPosition += 5;
+    doc.text('• Lower VPD = Less transpiration (slower growth potential)', 25, yPosition);
+    yPosition += 5;
+    doc.text('• Keep dew point below leaf temperature to avoid condensation', 25, yPosition);
+    yPosition += 5;
+    doc.text('• Consistent VPD leads to predictable growth and better yields', 25, yPosition);
+
+    yPosition += 18;
+
+    // Footer
+    doc.setDrawColor(224, 224, 224);
+    doc.setLineWidth(0.3);
+    doc.line(20, yPosition, 190, yPosition);
+
+    yPosition += 5;
+    doc.setFontSize(10);
+    doc.setTextColor(102, 102, 102);
+    doc.text('Generated by freevpd.com - Free Cannabis VPD Calculator', 105, yPosition, { align: 'center' });
+    yPosition += 5;
+    doc.setFontSize(9);
+    doc.text('Visit freevpd.com for real-time calculations and grow guides', 105, yPosition, { align: 'center' });
+
+    // Save the PDF
+    const filename = 'VPD-Reading-' + new Date().toISOString().slice(0,10) + '.pdf';
+    doc.save(filename);
+}
