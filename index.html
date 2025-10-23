@@ -108,7 +108,69 @@
                             <span>Your Reading</span>
                         </div>
                     </div>
-                    
+
+                    <div class="target-section" id="targetSectionMobile">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="targetVpdCheckMobile">
+                            <span class="checkmark"></span>
+                            Set Custom Target VPD
+                        </label>
+
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="dliCheckMobile" onchange="toggleDLI()">
+                            <span class="checkmark"></span>
+                            Track Daily Light Integral (DLI)
+                        </label>
+
+                        <div id="targetControlsContainerMobile"></div>
+
+                        <div class="recommendations" id="recommendationsMobile">
+                            <!-- Recommendations will appear here -->
+                        </div>
+
+                        <div class="dli-controls" id="dliControlsMobile" style="display: none;">
+                            <div class="dli-inputs-row">
+                                <div class="dli-input-group">
+                                    <label for="ppfdMobile">PPFD: <span id="ppfdDisplayMobile">500</span> μmol/m²/s</label>
+                                    <input type="number" id="ppfdInputMobile" min="100" max="2000" value="500" step="10">
+                                    <div class="input-info">
+                                        <small>💡 Use a quantum meter to measure light intensity</small>
+                                    </div>
+                                </div>
+                                <div class="dli-input-group">
+                                    <label for="photoperiodMobile">Photoperiod: <span id="photoperiodDisplayMobile">12</span> hours</label>
+                                    <input type="number" id="photoperiodInputMobile" min="8" max="24" value="12" step="0.5">
+                                    <div class="input-info">
+                                        <small>💡 Number of hours your lights are on per day</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dli-result">
+                                <div class="dli-value" id="dliDisplayMobile">21.6</div>
+                                <div class="dli-unit">mol/m²/day</div>
+                            </div>
+
+                            <div class="dli-chart-container">
+                                <canvas id="dliChartMobile" width="600" height="300"></canvas>
+                                <div class="dli-chart-legend">
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #4ade80;"></div>
+                                        <span>Regular Growth</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #16a34a;"></div>
+                                        <span>High Growth*</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="dli-info">
+                                <small>💡 Target DLI - Seedling: 15-25 | Vegetative: 25-40 | Flowering: 35-60 mol/m²/day</small>
+                                <br>
+                                <small>* High growth rates require supplemental CO₂ (800-1200 ppm) to prevent light stress and maximize photosynthesis efficiency.</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="input-group">

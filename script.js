@@ -49,14 +49,25 @@ function calculateDLI(ppfd, photoperiod) {
 function updateDLI() {
     const dli = calculateDLI(currentPPFD, currentPhotoperiod);
     const dliDisplay = document.getElementById('dliDisplay');
+    const dliDisplayMobile = document.getElementById('dliDisplayMobile');
     if (dliDisplay) {
         dliDisplay.textContent = dli.toFixed(1);
+    }
+    if (dliDisplayMobile) {
+        dliDisplayMobile.textContent = dli.toFixed(1);
     }
     drawDLIChart();
 }
 
 function drawDLIChart() {
-    const canvas = document.getElementById('dliChart');
+    const canvasDesktop = document.getElementById('dliChart');
+    const canvasMobile = document.getElementById('dliChartMobile');
+
+    if (canvasDesktop) drawDLIChartOnCanvas(canvasDesktop);
+    if (canvasMobile) drawDLIChartOnCanvas(canvasMobile);
+}
+
+function drawDLIChartOnCanvas(canvas) {
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
@@ -504,24 +515,43 @@ function toggleLeafTemp() {
 }
 
 function toggleDLI() {
-    useDLI = document.getElementById('dliCheck').checked;
-    const controls = document.getElementById('dliControls');
-    
+    const dliCheckDesktop = document.getElementById('dliCheck');
+    const dliCheckMobile = document.getElementById('dliCheckMobile');
+
+    // Get the checkbox that triggered the event, or use desktop as default
+    useDLI = (dliCheckDesktop && dliCheckDesktop.checked) || (dliCheckMobile && dliCheckMobile.checked);
+
+    // Sync both checkboxes
+    if (dliCheckDesktop) dliCheckDesktop.checked = useDLI;
+    if (dliCheckMobile) dliCheckMobile.checked = useDLI;
+
+    const controlsDesktop = document.getElementById('dliControls');
+    const controlsMobile = document.getElementById('dliControlsMobile');
+
     if (useDLI) {
-        controls.style.display = 'block';
+        if (controlsDesktop) controlsDesktop.style.display = 'block';
+        if (controlsMobile) controlsMobile.style.display = 'block';
     } else {
-        controls.style.display = 'none';
+        if (controlsDesktop) controlsDesktop.style.display = 'none';
+        if (controlsMobile) controlsMobile.style.display = 'none';
     }
 }
 
 function toggleTargetVPD() {
-    const checkbox = document.getElementById('targetVpdCheck');
+    const checkboxDesktop = document.getElementById('targetVpdCheck');
+    const checkboxMobile = document.getElementById('targetVpdCheckMobile');
     const targetControlsContainer = document.getElementById('targetControlsContainer');
-    
-    useCustomTarget = checkbox ? checkbox.checked : false;
-    
+    const targetControlsContainerMobile = document.getElementById('targetControlsContainerMobile');
+
+    // Get state from either checkbox
+    useCustomTarget = (checkboxDesktop && checkboxDesktop.checked) || (checkboxMobile && checkboxMobile.checked);
+
+    // Sync both checkboxes
+    if (checkboxDesktop) checkboxDesktop.checked = useCustomTarget;
+    if (checkboxMobile) checkboxMobile.checked = useCustomTarget;
+
     if (useCustomTarget) {
-        // Create controls if they don't exist
+        // Create desktop controls if they don't exist
         if (targetControlsContainer && !document.getElementById('targetControls')) {
             const controlsDiv = document.createElement('div');
             controlsDiv.id = 'targetControls';
@@ -534,19 +564,35 @@ function toggleTargetVPD() {
             `;
             targetControlsContainer.appendChild(controlsDiv);
         }
-        
+
+        // Create mobile controls if they don't exist
+        if (targetControlsContainerMobile && !document.getElementById('targetControlsMobile')) {
+            const controlsDivMobile = document.createElement('div');
+            controlsDivMobile.id = 'targetControlsMobile';
+            controlsDivMobile.className = 'target-controls-active';
+            controlsDivMobile.innerHTML = `
+                <label for="targetVpdMobile">Target VPD: <span id="targetDisplayMobile">${targetVPD.toFixed(1)}</span> kPa</label>
+                <input type="range" id="targetSliderMobile" min="0.4" max="1.6" value="${targetVPD}" step="0.1">
+                <input type="number" id="targetInputMobile" min="0.4" max="1.6" value="${targetVPD}" step="0.1">
+                <button class="unit-btn" onclick="setOptimalTarget()" style="margin-top: 10px; width: 100%;">Use Optimal for Stage</button>
+            `;
+            targetControlsContainerMobile.appendChild(controlsDivMobile);
+        }
+
         // Setup event listeners for the new controls
         setupTargetControlEvents();
     } else {
         // Remove controls
         const controls = document.getElementById('targetControls');
+        const controlsMobile = document.getElementById('targetControlsMobile');
         if (controls) controls.remove();
-        
+        if (controlsMobile) controlsMobile.remove();
+
         // Reset to optimal target for current stage when disabled
         targetVPD = stageRanges[currentStage].optimal;
         updateAllInputs();
     }
-    
+
     updateVPD();
 }
 
@@ -975,16 +1021,45 @@ function setupEventListeners() {
         { id: 'ppfdInput', event: 'input', handler: function(e) {
             currentPPFD = validateInput(e.target.value, 100, 2000, currentPPFD);
             const ppfdDisplay = document.getElementById('ppfdDisplay');
+            const ppfdDisplayMobile = document.getElementById('ppfdDisplayMobile');
+            const ppfdInputMobile = document.getElementById('ppfdInputMobile');
             if (ppfdDisplay) ppfdDisplay.textContent = currentPPFD;
+            if (ppfdDisplayMobile) ppfdDisplayMobile.textContent = currentPPFD;
+            if (ppfdInputMobile) ppfdInputMobile.value = currentPPFD;
+            updateDLI();
+        }},
+        { id: 'ppfdInputMobile', event: 'input', handler: function(e) {
+            currentPPFD = validateInput(e.target.value, 100, 2000, currentPPFD);
+            const ppfdDisplay = document.getElementById('ppfdDisplay');
+            const ppfdDisplayMobile = document.getElementById('ppfdDisplayMobile');
+            const ppfdInput = document.getElementById('ppfdInput');
+            if (ppfdDisplay) ppfdDisplay.textContent = currentPPFD;
+            if (ppfdDisplayMobile) ppfdDisplayMobile.textContent = currentPPFD;
+            if (ppfdInput) ppfdInput.value = currentPPFD;
             updateDLI();
         }},
         { id: 'photoperiodInput', event: 'input', handler: function(e) {
             currentPhotoperiod = validateInput(e.target.value, 8, 24, currentPhotoperiod);
             const photoperiodDisplay = document.getElementById('photoperiodDisplay');
+            const photoperiodDisplayMobile = document.getElementById('photoperiodDisplayMobile');
+            const photoperiodInputMobile = document.getElementById('photoperiodInputMobile');
             if (photoperiodDisplay) photoperiodDisplay.textContent = currentPhotoperiod;
+            if (photoperiodDisplayMobile) photoperiodDisplayMobile.textContent = currentPhotoperiod;
+            if (photoperiodInputMobile) photoperiodInputMobile.value = currentPhotoperiod;
             updateDLI();
         }},
-        { id: 'targetVpdCheck', event: 'change', handler: toggleTargetVPD }
+        { id: 'photoperiodInputMobile', event: 'input', handler: function(e) {
+            currentPhotoperiod = validateInput(e.target.value, 8, 24, currentPhotoperiod);
+            const photoperiodDisplay = document.getElementById('photoperiodDisplay');
+            const photoperiodDisplayMobile = document.getElementById('photoperiodDisplayMobile');
+            const photoperiodInput = document.getElementById('photoperiodInput');
+            if (photoperiodDisplay) photoperiodDisplay.textContent = currentPhotoperiod;
+            if (photoperiodDisplayMobile) photoperiodDisplayMobile.textContent = currentPhotoperiod;
+            if (photoperiodInput) photoperiodInput.value = currentPhotoperiod;
+            updateDLI();
+        }},
+        { id: 'targetVpdCheck', event: 'change', handler: toggleTargetVPD },
+        { id: 'targetVpdCheckMobile', event: 'change', handler: toggleTargetVPD }
     ];
 
     elements.forEach(function(element) {
@@ -1091,13 +1166,17 @@ function loadSettings() {
         
         // Load DLI settings
         useDLI = settings.useDLI || false;
-        document.getElementById('dliCheck').checked = useDLI;
+        const dliCheckDesktop = document.getElementById('dliCheck');
+        const dliCheckMobile = document.getElementById('dliCheckMobile');
+        if (dliCheckDesktop) dliCheckDesktop.checked = useDLI;
+        if (dliCheckMobile) dliCheckMobile.checked = useDLI;
         toggleDLI();
-        
+
         // Load custom target settings
         useCustomTarget = settings.useCustomTarget || false;
-        document.getElementById('targetVpdCheck').checked = useCustomTarget;
+        const targetCheckDesktop = document.getElementById('targetVpdCheck');
         const targetCheckMobile = document.getElementById('targetVpdCheckMobile');
+        if (targetCheckDesktop) targetCheckDesktop.checked = useCustomTarget;
         if (targetCheckMobile) targetCheckMobile.checked = useCustomTarget;
         toggleTargetVPD();
         
