@@ -1953,6 +1953,17 @@ input[type="range"]::-moz-range-thumb:hover {
     font-style: italic;
 }
 
+.article-content a {
+    color: #03cc6f;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.article-content a:hover {
+    color: #4ade80;
+    text-decoration: underline;
+}
+
 .calculator-link {
     color: #ffffff;
     text-decoration: none;
@@ -2037,11 +2048,13 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .article-sources a {
-    color: #028552;
+    color: #03cc6f;
     text-decoration: none;
+    font-weight: 500;
 }
 
 .article-sources a:hover {
+    color: #4ade80;
     text-decoration: underline;
 }
 
