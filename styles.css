@@ -1964,6 +1964,15 @@ input[type="range"]::-moz-range-thumb:hover {
     text-decoration: underline;
 }
 
+.article-content a em {
+    color: #03cc6f;
+    font-style: italic;
+}
+
+.article-content a:hover em {
+    color: #4ade80;
+}
+
 .calculator-link {
     color: #ffffff;
     text-decoration: none;
