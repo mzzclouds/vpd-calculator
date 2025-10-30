@@ -1272,12 +1272,16 @@ input[type="range"]::-moz-range-thumb:hover {
         width: 100%;
         display: flex;
         justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
     }
 
     .nav-link {
         font-size: 0.9rem;
-        padding: 10px 16px;
+        padding: 10px 14px;
         white-space: nowrap;
+        flex-shrink: 1;
+        min-width: 0;
     }
 
     h1 {
