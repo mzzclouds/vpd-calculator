@@ -137,7 +137,3 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-
-# Private toolkit landing page
-toolkit.html
-Complete_Growing_Toolkit_Photo-removebg-preview.*
