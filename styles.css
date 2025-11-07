@@ -1977,23 +1977,23 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .article-content a {
-    color: #03cc6f;
-    text-decoration: none;
+    color: #028552;
+    text-decoration: underline;
     font-weight: 500;
 }
 
 .article-content a:hover {
-    color: #4ade80;
+    color: #03cc6f;
     text-decoration: underline;
 }
 
 .article-content a em {
-    color: #03cc6f;
+    color: #028552;
     font-style: italic;
 }
 
 .article-content a:hover em {
-    color: #4ade80;
+    color: #03cc6f;
 }
 
 .calculator-link {
