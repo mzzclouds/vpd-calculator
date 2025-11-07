@@ -1392,7 +1392,7 @@ input[type="range"]::-moz-range-thumb:hover {
     }
 
     .vpd-result {
-        padding: 28px 16px 20px 16px;
+        padding: 24px 16px;
         margin-bottom: 64px;
     }
 
@@ -1408,7 +1408,7 @@ input[type="range"]::-moz-range-thumb:hover {
 
     .vpd-value {
         font-size: 3rem;
-        margin-bottom: 4px;
+        margin-bottom: 12px;
     }
 
     .vpd-value::after {
