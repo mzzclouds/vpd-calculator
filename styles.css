@@ -1400,6 +1400,7 @@ input[type="range"]::-moz-range-thumb:hover {
         font-size: 0.7rem;
         padding: 4px 10px;
         top: -11px;
+        white-space: nowrap;
     }
 
     .mobile-chart .vpd-result {
