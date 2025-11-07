@@ -1392,7 +1392,7 @@ input[type="range"]::-moz-range-thumb:hover {
     }
 
     .vpd-result {
-        padding: 20px 16px;
+        padding: 28px 16px 20px 16px;
         margin-bottom: 64px;
     }
 
