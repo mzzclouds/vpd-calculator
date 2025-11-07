@@ -1346,6 +1346,14 @@ input[type="range"]::-moz-range-thumb:hover {
         min-height: 48px;
     }
 
+    /* Ensure DLI spinners remain visible on mobile */
+    .dli-input-group input[type="number"]::-webkit-inner-spin-button {
+        opacity: 1;
+        height: 24px;
+        width: 24px;
+        margin: 2px 6px;
+    }
+
     input[type="range"] {
         height: 10px;
         margin: 8px 0;
