@@ -1547,7 +1547,8 @@ input[type="range"]::-moz-range-thumb:hover {
         padding: 8px 14px;
     }
 
-    .calculator-panel::before {
+    .calculator-panel::before,
+    .chart-container::before {
         font-size: 0.65rem;
         padding: 3px 8px;
     }
