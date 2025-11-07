@@ -19,6 +19,7 @@ let currentStage = 'vegetative';
 let targetVPD = 1.0;
 let useLeafTemp = false;
 let leafTemp = 72;
+let leafTempOffset = 2;
 let useDLI = false;
 let useCustomTarget = false;
 let currentPPFD = 500;
@@ -752,9 +753,13 @@ function setTempUnit(unit) {
     document.getElementById('tempUnit').textContent = unit;
     const offsetUnit = document.getElementById('offsetUnit');
     if (offsetUnit) offsetUnit.textContent = unit;
-    
+
     document.querySelectorAll('.unit-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+    document.querySelectorAll('.unit-btn').forEach(btn => {
+        if (btn.textContent === '°' + unit) {
+            btn.classList.add('active');
+        }
+    });
     
     document.getElementById('tempSlider').value = Math.round(currentTemp);
     document.getElementById('tempInput').value = currentTemp.toFixed(1);
