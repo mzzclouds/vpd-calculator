@@ -677,7 +677,16 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 /* Make number input spinners always visible and styled */
-.dli-input-group input[type="number"]::-webkit-inner-spin-button {
+.dli-input-group input[type="number"] {
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.dli-input-group input[type="number"]::-webkit-inner-spin-button,
+.dli-input-group input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: inner-spin-button;
+    display: inline-block;
     opacity: 1;
     cursor: pointer;
     height: 20px;
@@ -688,12 +697,9 @@ input[type="range"]::-moz-range-thumb:hover {
     position: relative;
 }
 
-.dli-input-group input[type="number"]::-webkit-inner-spin-button:hover {
+.dli-input-group input[type="number"]::-webkit-inner-spin-button:hover,
+.dli-input-group input[type="number"]::-webkit-outer-spin-button:hover {
     background-color: var(--accent-green-dark);
-}
-
-.dli-input-group input[type="number"]::-webkit-outer-spin-button {
-    display: none;
 }
 
 /* For Firefox - show the spinners */
@@ -1347,11 +1353,14 @@ input[type="range"]::-moz-range-thumb:hover {
     }
 
     /* Ensure DLI spinners remain visible on mobile */
-    .dli-input-group input[type="number"]::-webkit-inner-spin-button {
-        opacity: 1;
-        height: 24px;
-        width: 24px;
-        margin: 2px 6px;
+    .dli-input-group input[type="number"]::-webkit-inner-spin-button,
+    .dli-input-group input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: inner-spin-button !important;
+        display: inline-block !important;
+        opacity: 1 !important;
+        height: 28px;
+        width: 28px;
+        margin: 2px 8px;
     }
 
     input[type="range"] {
